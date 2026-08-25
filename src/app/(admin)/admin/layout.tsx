@@ -1,0 +1,32 @@
+import { requireStaff } from "@/server/auth/requireStaff";
+import { logoutAction } from "./actions";
+
+export const dynamic = "force-dynamic";
+
+export default async function AdminLayout({
+  children,
+}: LayoutProps<"/admin">) {
+  const staff = await requireStaff();
+
+  return (
+    <div className="flex min-h-full flex-col bg-zinc-50">
+      <header className="flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-4">
+        <div>
+          <p className="text-sm font-semibold text-zinc-950">MediSlot Admin</p>
+          <p className="text-xs text-zinc-500">
+            {staff.email ?? "Staff"} · {staff.role}
+          </p>
+        </div>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-800 hover:bg-zinc-100"
+          >
+            Sign out
+          </button>
+        </form>
+      </header>
+      <div className="flex-1">{children}</div>
+    </div>
+  );
+}
