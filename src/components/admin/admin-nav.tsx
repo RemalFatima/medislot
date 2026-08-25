@@ -10,6 +10,7 @@ const links = [
   { href: "/admin/services", label: "Services" },
   { href: "/admin/holidays", label: "Holidays" },
   { href: "/admin/appointments", label: "Appointments" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export function AdminNav() {

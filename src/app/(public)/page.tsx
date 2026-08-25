@@ -12,20 +12,28 @@ export default async function Home() {
     listDepartments({ activeOnly: true }),
     listDoctors({ activeOnly: true }),
   ]);
+  const clinicName = organization?.name ?? "MediSlot";
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-12 px-6 py-12">
       <section>
         <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">
-          {organization?.name ?? "MediSlot"}
+          {clinicName}
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950">
-          Find a doctor and book a visit
+          {organization?.branding.tagline ?? "Find a doctor and book a visit"}
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-600">
-          Browse departments and doctor profiles. Online booking will open once
-          schedules are published.
+          {organization?.branding.description ??
+            "Browse departments and doctor profiles, then book a time online."}
         </p>
+        {organization?.phone || organization?.city ? (
+          <p className="mt-3 text-sm text-zinc-500">
+            {[organization.phone, organization.city, organization.address]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        ) : null}
       </section>
 
       <section>
