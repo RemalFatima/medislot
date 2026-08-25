@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getDoctorBySlug } from "@/server/catalog/doctors";
 import { listDoctorAvailability } from "@/server/scheduling/availability";
 import {
@@ -118,12 +119,28 @@ export default async function DoctorProfilePage({
 
       {doctor.services.length > 0 ? (
         <section className="mt-10">
-          <h2 className="text-lg font-semibold text-zinc-950">Services</h2>
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-lg font-semibold text-zinc-950">Services</h2>
+            <Link
+              href={`/doctors/${doctor.slug}/book`}
+              className="rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            >
+              Book appointment
+            </Link>
+          </div>
           <ul className="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
             {doctor.services.map((service) => (
-              <li key={service.id} className="flex justify-between px-4 py-3 text-sm">
+              <li key={service.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                 <span className="text-zinc-900">{service.name}</span>
-                <span className="text-zinc-500">{service.duration_minutes} min</span>
+                <span className="flex items-center gap-3">
+                  <span className="text-zinc-500">{service.duration_minutes} min</span>
+                  <Link
+                    href={`/doctors/${doctor.slug}/book?service=${service.id}`}
+                    className="text-zinc-900 underline-offset-2 hover:underline"
+                  >
+                    Book
+                  </Link>
+                </span>
               </li>
             ))}
           </ul>

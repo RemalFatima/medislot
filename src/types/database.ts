@@ -167,7 +167,52 @@ export type Database = {
       }>;
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      list_occupied_ranges: {
+        Args: {
+          p_doctor_id: string;
+          p_from: string;
+          p_to: string;
+        };
+        Returns: {
+          start_at: string;
+          occupied_end_at: string;
+        }[];
+      };
+      get_booking_by_token: {
+        Args: {
+          p_token: string;
+        };
+        Returns: {
+          confirmation_token: string;
+          status: AppointmentStatus;
+          start_at: string;
+          end_at: string;
+          patient_name: string;
+          doctor_name: string;
+          service_name: string;
+          organization_name: string;
+          timezone: string;
+        }[];
+      };
+      book_appointment: {
+        Args: {
+          p_doctor_id: string;
+          p_service_id: string;
+          p_start_at: string;
+          p_patient_name: string;
+          p_patient_phone: string;
+          p_patient_email: string | null;
+        };
+        Returns: {
+          id: string;
+          confirmation_token: string;
+          start_at: string;
+          end_at: string;
+          status: AppointmentStatus;
+        }[];
+      };
+    };
     Enums: {
       organization_type: OrganizationType;
       member_role: MemberRole;

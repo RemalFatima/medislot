@@ -169,7 +169,7 @@ export async function listDoctors(options?: {
     throw new Error(error.message);
   }
 
-  return ((data ?? []) as DoctorRow[]).map(mapListItem);
+  return ((data ?? []) as unknown as DoctorRow[]).map(mapListItem);
 }
 
 export async function getDoctorById(id: string): Promise<DoctorDetail | null> {
@@ -249,7 +249,7 @@ async function loadDoctor(options: {
     return null;
   }
 
-  const row = data as DoctorRow;
+  const row = data as unknown as DoctorRow;
   const list = mapListItem(row);
   const services = (row.doctor_services ?? [])
     .map((join) => join.services)

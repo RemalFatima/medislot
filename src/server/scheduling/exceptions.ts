@@ -1,5 +1,6 @@
 import { createClient } from "@/server/supabase/server";
-import { getOrganizationId } from "@/server/tenant/getOrganizationId";
+import { hasSupabasePublicEnv } from "@/server/supabase/env";
+import { getOrganizationId, tryGetOrganizationId } from "@/server/tenant/getOrganizationId";
 import type { ExceptionType } from "@/types/database";
 import { exceptionInputSchema } from "./schemas";
 
@@ -31,6 +32,37 @@ export async function listExceptions(options?: {
   }
 
   const { data, error } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data ?? [];
+}
+
+export async function listRelevantExceptions(
+  doctorId: string,
+  fromDate: string,
+  toDate: string,
+): Promise<AvailabilityException[]> {
+  if (!hasSupabasePublicEnv()) {
+    return [];
+  }
+
+  const organizationId = await tryGetOrganizationId();
+  if (!organizationId) {
+    return [];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("availability_exceptions")
+    .select("id, doctor_id, date, type, start_time, end_time, reason")
+    .eq("organization_id", organizationId)
+    .gte("date", fromDate)
+    .lte("date", toDate)
+    .or(`doctor_id.is.null,doctor_id.eq.${doctorId}`)
+    .order("date", { ascending: true });
 
   if (error) {
     throw new Error(error.message);

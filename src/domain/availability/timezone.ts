@@ -93,3 +93,12 @@ export function weekdayMonday0(
   }
   return index;
 }
+
+/** Calendar date (YYYY-MM-DD) for an instant in a timezone. */
+export function calendarDateInTimeZone(
+  instant: Date,
+  timeZone: string,
+): string {
+  const parts = partsInTimeZone(instant, timeZone);
+  return `${String(parts.year).padStart(4, "0")}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
+}
