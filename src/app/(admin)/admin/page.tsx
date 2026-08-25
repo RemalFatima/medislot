@@ -20,10 +20,9 @@ export default async function AdminPage() {
         Dashboard
       </h1>
       <p className="mt-2 max-w-xl text-sm text-zinc-600">
-        Manage departments, doctors, and services. Scheduling and booking come
-        next.
+        Catalog, schedules, and appointments for this clinic.
       </p>
-      <dl className="mt-8 grid max-w-3xl gap-3 text-sm sm:grid-cols-3">
+      <dl className="mt-8 grid max-w-3xl gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
         <Link
           href="/admin/departments"
           className="rounded-lg border border-zinc-200 bg-white px-4 py-3 hover:border-zinc-400"
@@ -50,6 +49,13 @@ export default async function AdminPage() {
           <dd className="mt-1 text-2xl font-semibold text-zinc-900">
             {services.length}
           </dd>
+        </Link>
+        <Link
+          href="/admin/appointments"
+          className="rounded-lg border border-zinc-200 bg-white px-4 py-3 hover:border-zinc-400"
+        >
+          <dt className="text-zinc-500">Appointments</dt>
+          <dd className="mt-1 text-sm font-medium text-zinc-900">Open list</dd>
         </Link>
       </dl>
       <p className="mt-6 text-xs text-zinc-500">

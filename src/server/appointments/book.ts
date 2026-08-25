@@ -1,4 +1,5 @@
 import { calendarDateInTimeZone } from "@/domain/availability/timezone";
+import { getStaffContext } from "@/server/auth/getStaffContext";
 import { getDoctorById } from "@/server/catalog/doctors";
 import { onAppointmentCreated } from "@/server/notifications/onAppointmentCreated";
 import { createClient } from "@/server/supabase/server";
@@ -70,6 +71,13 @@ export async function bookAppointment(
     throw new SlotUnavailableError();
   }
 
+  if (parsed.source === "admin") {
+    const staff = await getStaffContext();
+    if (!staff) {
+      throw new Error("You do not have permission to create a walk-in.");
+    }
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("book_appointment", {
     p_doctor_id: parsed.doctor_id,
@@ -78,6 +86,7 @@ export async function bookAppointment(
     p_patient_name: parsed.patient_name,
     p_patient_phone: parsed.patient_phone,
     p_patient_email: parsed.patient_email,
+    p_source: parsed.source,
   });
 
   const booked = rpcRows(data)[0];
@@ -93,6 +102,18 @@ export async function bookAppointment(
     appointmentId: booked.id,
     organizationId,
   });
+
+  if (parsed.source === "admin" && parsed.notes) {
+    const { error: notesError } = await supabase
+      .from("appointments")
+      .update({ notes: parsed.notes })
+      .eq("organization_id", organizationId)
+      .eq("id", booked.id);
+
+    if (notesError) {
+      throw new Error(notesError.message);
+    }
+  }
 
   return booked;
 }

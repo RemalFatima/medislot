@@ -203,6 +203,7 @@ export type Database = {
           p_patient_name: string;
           p_patient_phone: string;
           p_patient_email: string | null;
+          p_source: AppointmentSource;
         };
         Returns: {
           id: string;

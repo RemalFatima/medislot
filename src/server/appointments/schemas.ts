@@ -17,6 +17,13 @@ export const bookAppointmentSchema = z.object({
     }
     return value.trim();
   }, z.email().nullable()),
+  source: z.enum(["public", "admin"]).default("public"),
+  notes: z.preprocess((value) => {
+    if (typeof value !== "string" || value.trim().length === 0) {
+      return null;
+    }
+    return value.trim();
+  }, z.string().max(2000).nullable()),
 });
 
 export type BookAppointmentInput = z.infer<typeof bookAppointmentSchema>;
