@@ -107,7 +107,7 @@ if (createError) {
 
   if (!existing) {
     throw new Error(
-      "Admin email already exists in Auth but could not be looked up. Create the staff_members row manually.",
+      "Admin email already exists in Auth but could not be looked up. Create the organization_members row manually.",
     );
   }
 
@@ -118,15 +118,17 @@ if (!userId) {
   throw new Error("Could not resolve the admin user id.");
 }
 
-const { error: membershipError } = await supabase.from("staff_members").upsert(
-  {
-    organization_id: organizationId,
-    user_id: userId,
-    role: "admin",
-    is_active: true,
-  },
-  { onConflict: "organization_id,user_id" },
-);
+const { error: membershipError } = await supabase
+  .from("organization_members")
+  .upsert(
+    {
+      organization_id: organizationId,
+      user_id: userId,
+      role: "owner",
+      is_active: true,
+    },
+    { onConflict: "organization_id,user_id" },
+  );
 
 if (membershipError) {
   throw membershipError;

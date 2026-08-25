@@ -1,3 +1,4 @@
+import { ADMIN_CONSOLE_ROLES } from "@/types/database";
 import { createClient } from "@/server/supabase/server";
 import { getOrganizationId } from "@/server/tenant/getOrganizationId";
 import type { StaffContext } from "./types";
@@ -21,11 +22,12 @@ export async function getStaffContext(): Promise<StaffContext | null> {
   const organizationId = await getOrganizationId();
 
   const { data: member, error } = await supabase
-    .from("staff_members")
+    .from("organization_members")
     .select("organization_id, role, is_active")
     .eq("user_id", userId)
     .eq("organization_id", organizationId)
     .eq("is_active", true)
+    .in("role", [...ADMIN_CONSOLE_ROLES])
     .maybeSingle();
 
   if (error || !member) {

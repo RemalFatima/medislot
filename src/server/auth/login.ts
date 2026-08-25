@@ -1,3 +1,4 @@
+import { ADMIN_CONSOLE_ROLES } from "@/types/database";
 import { createClient } from "@/server/supabase/server";
 import { getOrganizationId } from "@/server/tenant/getOrganizationId";
 import { loginSchema } from "./schemas";
@@ -23,11 +24,12 @@ export async function loginWithPassword(input: unknown): Promise<LoginResult> {
   const organizationId = await getOrganizationId();
 
   const { data: member } = await supabase
-    .from("staff_members")
+    .from("organization_members")
     .select("id")
     .eq("user_id", data.user.id)
     .eq("organization_id", organizationId)
     .eq("is_active", true)
+    .in("role", [...ADMIN_CONSOLE_ROLES])
     .maybeSingle();
 
   if (!member) {

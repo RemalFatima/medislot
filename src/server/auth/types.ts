@@ -1,8 +1,8 @@
-import type { StaffRole } from "@/types/database";
+import type { MemberRole } from "@/types/database";
 
 export type StaffContext = {
   userId: string;
   email: string | undefined;
   organizationId: string;
-  role: StaffRole;
+  role: MemberRole;
 };
