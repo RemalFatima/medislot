@@ -4,7 +4,10 @@ import { requireStaff } from "@/server/auth/requireStaff";
 import { listDepartments } from "@/server/catalog/departments";
 import { getDoctorById } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
+import { listDoctorAvailability } from "@/server/scheduling/availability";
+import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
 import { DoctorForm } from "../doctor-form";
+import { WeeklyHoursForm } from "../weekly-hours-form";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +18,12 @@ export default async function EditDoctorPage({
 }) {
   const staff = await requireStaff();
   const { id } = await params;
-  const [doctor, departments, services] = await Promise.all([
+  const [doctor, departments, services, windows, timezone] = await Promise.all([
     getDoctorById(id),
     listDepartments(),
     listServices(),
+    listDoctorAvailability(id),
+    getOrganizationTimezone(),
   ]);
 
   if (!doctor) {
@@ -34,6 +39,13 @@ export default async function EditDoctorPage({
         doctor={doctor}
         departments={departments}
         services={services}
+        readOnly={!canManageCatalog(staff.role)}
+      />
+      <WeeklyHoursForm
+        key={windows.map((window) => window.id).join()}
+        doctorId={doctor.id}
+        windows={windows}
+        timezone={timezone}
         readOnly={!canManageCatalog(staff.role)}
       />
     </main>

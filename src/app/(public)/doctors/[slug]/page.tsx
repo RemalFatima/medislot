@@ -1,5 +1,11 @@
 import { notFound } from "next/navigation";
 import { getDoctorBySlug } from "@/server/catalog/doctors";
+import { listDoctorAvailability } from "@/server/scheduling/availability";
+import {
+  timeInputValue,
+  WEEKDAYS,
+} from "@/server/scheduling/constants";
+import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +20,11 @@ export default async function DoctorProfilePage({
   if (!doctor) {
     notFound();
   }
+
+  const [windows, timezone] = await Promise.all([
+    listDoctorAvailability(doctor.id),
+    getOrganizationTimezone(),
+  ]);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
@@ -70,6 +81,40 @@ export default async function DoctorProfilePage({
           </div>
         ) : null}
       </dl>
+
+      {windows.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="text-lg font-semibold text-zinc-950">Weekly hours</h2>
+          <p className="mt-1 text-sm text-zinc-500">Times in {timezone}</p>
+          <ul className="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
+            {WEEKDAYS.map((day) => {
+              const dayWindows = windows.filter(
+                (window) => window.weekday === day.value,
+              );
+              if (dayWindows.length === 0) {
+                return null;
+              }
+
+              return (
+                <li
+                  key={day.value}
+                  className="flex justify-between px-4 py-3 text-sm"
+                >
+                  <span className="text-zinc-900">{day.label}</span>
+                  <span className="text-zinc-500">
+                    {dayWindows
+                      .map(
+                        (window) =>
+                          `${timeInputValue(window.start_time)}–${timeInputValue(window.end_time)}`,
+                      )
+                      .join(", ")}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {doctor.services.length > 0 ? (
         <section className="mt-10">
