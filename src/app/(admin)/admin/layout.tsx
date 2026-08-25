@@ -1,4 +1,5 @@
 import { requireStaff } from "@/server/auth/requireStaff";
+import { AdminNav } from "@/components/admin/admin-nav";
 import { logoutAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export default async function AdminLayout({
           </button>
         </form>
       </header>
+      <AdminNav />
       <div className="flex-1">{children}</div>
     </div>
   );

@@ -2,6 +2,7 @@
 -- Target schema approved 2026-08-25. Does not implement booking UI.
 
 create extension if not exists btree_gist;
+create extension if not exists pgcrypto with schema extensions;
 
 -- ---------------------------------------------------------------------------
 -- Enums
@@ -420,8 +421,17 @@ create index availability_exceptions_doctor_id_date_idx
 -- ---------------------------------------------------------------------------
 -- appointments
 -- V1 inserts status = confirmed. pending is reserved for a later approval flow.
--- Occupying range is [start_at, end_at + buffer_minutes).
--- ---------------------------------------------------------------------------
+-- Occupying range is [start_at, occupied_end_at) where occupied_end_at
+-- is end_at plus buffer_minutes (set by trigger; cannot be an index expression).
+create or replace function public.set_appointment_occupied_end()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.occupied_end_at := new.end_at + make_interval(mins => new.buffer_minutes);
+  return new;
+end;
+$$;
 
 create table public.appointments (
   id uuid primary key default gen_random_uuid(),
@@ -434,9 +444,10 @@ create table public.appointments (
   start_at timestamptz not null,
   end_at timestamptz not null,
   buffer_minutes integer not null default 0,
+  occupied_end_at timestamptz not null,
   status public.appointment_status not null default 'confirmed',
   notes text,
-  confirmation_token text not null default encode(gen_random_bytes(16), 'hex'),
+  confirmation_token text not null default encode(extensions.gen_random_bytes(16), 'hex'),
   source public.appointment_source not null default 'public',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -450,15 +461,17 @@ create table public.appointments (
     on delete restrict,
   constraint appointments_range_check check (end_at > start_at),
   constraint appointments_buffer_minutes_check check (buffer_minutes >= 0),
+  constraint appointments_occupied_end_check check (occupied_end_at >= end_at),
   constraint appointments_no_overlap exclude using gist (
     doctor_id with =,
-    tstzrange(
-      start_at,
-      end_at + make_interval(mins => buffer_minutes),
-      '[)'
-    ) with &&
+    tstzrange(start_at, occupied_end_at, '[)') with &&
   ) where (status in ('pending', 'confirmed'))
 );
+
+create trigger appointments_set_occupied_end
+  before insert or update of start_at, end_at, buffer_minutes
+  on public.appointments
+  for each row execute procedure public.set_appointment_occupied_end();
 
 create index appointments_organization_id_start_at_idx
   on public.appointments (organization_id, start_at);

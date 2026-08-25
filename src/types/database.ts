@@ -145,6 +145,7 @@ export type Database = {
         start_at: string;
         end_at: string;
         buffer_minutes: number;
+        occupied_end_at: string;
         status: AppointmentStatus;
         notes: string | null;
         confirmation_token: string;

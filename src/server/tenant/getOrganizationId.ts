@@ -25,3 +25,10 @@ function resolveFromEnvironment(): string {
 export async function getOrganizationId(): Promise<string> {
   return resolveFromEnvironment();
 }
+
+/** Returns null when ORGANIZATION_ID is missing or invalid. */
+export async function tryGetOrganizationId(): Promise<string | null> {
+  const parsed = organizationIdSchema.safeParse(process.env.ORGANIZATION_ID);
+  return parsed.success ? parsed.data : null;
+}
+
