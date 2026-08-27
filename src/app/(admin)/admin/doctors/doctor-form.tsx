@@ -125,15 +125,24 @@ export function DoctorForm({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card)">
-        <h2 className="text-base font-semibold text-foreground">Departments</h2>
+      <section
+        aria-labelledby="doctor-departments-heading"
+        className="rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card)"
+      >
+        <h2 id="doctor-departments-heading" className="text-base font-semibold text-foreground">
+          Departments
+        </h2>
         <p className="mt-1 text-sm text-muted">
           Assign where this doctor appears in the public catalog.
         </p>
         {departments.length === 0 ? (
           <p className="mt-3 text-sm text-muted">Create a department first.</p>
         ) : (
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <div
+            role="group"
+            aria-label="Departments"
+            className="mt-3 grid gap-2 sm:grid-cols-2"
+          >
             {departments.map((department) => (
               <label
                 key={department.id}
@@ -154,15 +163,24 @@ export function DoctorForm({
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card)">
-        <h2 className="text-base font-semibold text-foreground">Services</h2>
+      <section
+        aria-labelledby="doctor-services-heading"
+        className="rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card)"
+      >
+        <h2 id="doctor-services-heading" className="text-base font-semibold text-foreground">
+          Services
+        </h2>
         <p className="mt-1 text-sm text-muted">
           Patients can only book services assigned here.
         </p>
         {services.length === 0 ? (
           <p className="mt-3 text-sm text-muted">Create a service first.</p>
         ) : (
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <div
+            role="group"
+            aria-label="Services"
+            className="mt-3 grid gap-2 sm:grid-cols-2"
+          >
             {services.map((service) => (
               <label
                 key={service.id}

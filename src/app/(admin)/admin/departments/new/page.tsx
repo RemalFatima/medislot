@@ -6,6 +6,7 @@ import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -15,15 +16,12 @@ export default async function NewDepartmentPage() {
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <p className="mb-4 text-sm text-muted">
-        <Link href="/admin/departments" className="hover:text-foreground">
-          Departments
-        </Link>
-        <span aria-hidden className="mx-2">
-          /
-        </span>
-        <span className="text-foreground">New</span>
-      </p>
+      <Breadcrumb
+        items={[
+          { href: "/admin/departments", label: "Departments" },
+          { label: "New" },
+        ]}
+      />
       <PageHeader
         title="New department"
         description="Departments appear on the public site when they are active."

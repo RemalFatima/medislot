@@ -17,7 +17,7 @@ export function BookingSteps({
   const currentIndex = Math.min(Math.max(current, 1), STEPS.length) - 1;
 
   return (
-    <div className="mb-8">
+    <nav aria-label="Booking progress" className="mb-8">
       <p className="text-sm font-medium text-foreground">
         Step {currentIndex + 1} of {STEPS.length}
         <span className="font-normal text-muted"> · {STEPS[currentIndex]}</span>
@@ -33,6 +33,6 @@ export function BookingSteps({
           />
         ))}
       </ol>
-    </div>
+    </nav>
   );
 }

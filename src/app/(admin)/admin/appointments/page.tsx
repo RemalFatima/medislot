@@ -167,15 +167,16 @@ export default async function AdminAppointmentsPage({
 
           <div className="mt-3 hidden overflow-x-auto lg:block">
             <table className="w-full min-w-176 border-collapse text-sm">
+              <caption className="sr-only">Appointments</caption>
               <thead>
                 <tr className="border-b border-border text-left text-muted">
-                  <th className="py-3 pr-4 font-medium">Time</th>
-                  <th className="py-3 pr-4 font-medium">Patient</th>
-                  <th className="py-3 pr-4 font-medium">Doctor</th>
-                  <th className="py-3 pr-4 font-medium">Service</th>
-                  <th className="py-3 pr-4 font-medium">Source</th>
-                  <th className="py-3 pr-4 font-medium">Status</th>
-                  <th className="py-3 font-medium">Actions</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Time</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Patient</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Doctor</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Service</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Source</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Status</th>
+                  <th scope="col" className="py-3 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>

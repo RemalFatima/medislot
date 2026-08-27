@@ -6,6 +6,7 @@ import { timeInputValue, WEEKDAYS } from "@/server/scheduling/constants";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
 import { doctorInitials } from "@/components/public/doctor-card";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -47,15 +48,12 @@ export default async function DoctorProfilePage({
   return (
     <main className="flex-1 py-10 sm:py-12">
       <Container className="max-w-4xl">
-        <p className="mb-4 text-sm text-muted">
-          <Link href="/doctors" className="hover:text-foreground">
-            Doctors
-          </Link>
-          <span aria-hidden className="mx-2">
-            /
-          </span>
-          <span className="text-foreground">{doctor.full_name}</span>
-        </p>
+        <Breadcrumb
+          items={[
+            { href: "/doctors", label: "Doctors" },
+            { label: doctor.full_name },
+          ]}
+        />
 
         <Card className="p-5 sm:p-6">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start">

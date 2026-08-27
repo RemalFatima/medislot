@@ -38,7 +38,7 @@ export function DepartmentCard({
   doctorCount?: number;
 }) {
   return (
-    <Link href={`/departments/${department.slug}`} className="block h-full">
+    <Link href={`/departments/${department.slug}`} className="block h-full rounded-xl">
       <Card className="flex h-full flex-col p-5 transition-colors hover:border-primary/30">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-semibold text-foreground">

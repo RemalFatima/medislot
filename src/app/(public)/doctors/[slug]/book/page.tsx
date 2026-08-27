@@ -11,6 +11,7 @@ import { doctorInitials } from "@/components/public/doctor-card";
 import { BookingFilters } from "@/components/public/booking-filters";
 import { BookingSteps } from "@/components/public/booking-steps";
 import { buttonClass } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -63,15 +64,12 @@ export default async function BookDoctorPage({
   return (
     <main className="flex-1 py-10 sm:py-12">
       <Container className="max-w-4xl">
-        <p className="mb-4 text-sm text-muted">
-          <Link href={`/doctors/${doctor.slug}`} className="hover:text-foreground">
-            {doctor.full_name}
-          </Link>
-          <span aria-hidden className="mx-2">
-            /
-          </span>
-          <span className="text-foreground">Book</span>
-        </p>
+        <Breadcrumb
+          items={[
+            { href: `/doctors/${doctor.slug}`, label: doctor.full_name },
+            { label: "Book" },
+          ]}
+        />
 
         <BookingSteps current={4} />
 

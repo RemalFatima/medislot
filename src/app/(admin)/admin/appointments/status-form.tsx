@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useId } from "react";
 import { allowedStatusTransitions } from "@/domain/appointments/status";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ export function StatusForm({
   status: AppointmentStatus;
 }) {
   const next = allowedStatusTransitions(status);
+  const statusFieldId = useId();
   const [state, formAction, pending] = useActionState(
     updateAppointmentStatusAction,
     initialState,
@@ -35,7 +36,15 @@ export function StatusForm({
     <form action={formAction} className="flex w-full flex-col items-stretch gap-1 sm:w-auto sm:items-end">
       <input type="hidden" name="id" value={id} />
       <div className="flex gap-2">
-        <select name="status" defaultValue={next[0]} className={selectClass}>
+        <label htmlFor={statusFieldId} className="sr-only">
+          Next status
+        </label>
+        <select
+          id={statusFieldId}
+          name="status"
+          defaultValue={next[0]}
+          className={selectClass}
+        >
           {next.map((value) => (
             <option key={value} value={value}>
               {APPOINTMENT_STATUS_LABELS[value]}

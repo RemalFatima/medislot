@@ -258,7 +258,7 @@ function SectionHeading({
         <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
       </div>
       <Link href={href} className="shrink-0 text-sm font-medium text-primary hover:text-primary-hover">
-        View all
+        View all<span className="sr-only"> {title}</span>
       </Link>
     </div>
   );

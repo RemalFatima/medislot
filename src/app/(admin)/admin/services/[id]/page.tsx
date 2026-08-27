@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VisibilityBadge } from "@/components/admin/visibility-badge";
 import { canManageCatalog } from "@/server/auth/permissions";
@@ -7,6 +6,7 @@ import { getServiceById } from "@/server/catalog/services";
 import { ServiceForm } from "../service-form";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -25,15 +25,12 @@ export default async function EditServicePage({
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <p className="mb-4 text-sm text-muted">
-        <Link href="/admin/services" className="hover:text-foreground">
-          Services
-        </Link>
-        <span aria-hidden className="mx-2">
-          /
-        </span>
-        <span className="text-foreground">{service.name}</span>
-      </p>
+      <Breadcrumb
+        items={[
+          { href: "/admin/services", label: "Services" },
+          { label: service.name },
+        ]}
+      />
       <PageHeader
         title={service.name}
         description="Uncheck Active to stop this service being booked online. Catalog rows are not deleted."

@@ -18,6 +18,7 @@ export function EmptyState({
         "rounded-xl border border-dashed border-border bg-surface px-4 py-10 text-center sm:px-6 sm:py-12",
         className,
       )}
+      role="status"
     >
       <p className="font-medium text-foreground">{title}</p>
       {description ? (

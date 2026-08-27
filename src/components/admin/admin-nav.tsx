@@ -81,7 +81,7 @@ export function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
+                      "flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)",
                       active
                         ? "bg-accent font-medium text-primary"
                         : "text-foreground/80 hover:bg-surface-muted hover:text-foreground",

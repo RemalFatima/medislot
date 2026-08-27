@@ -4,6 +4,7 @@ import { getDepartmentBySlug } from "@/server/catalog/departments";
 import { listDoctors } from "@/server/catalog/doctors";
 import { DoctorCard } from "@/components/public/doctor-card";
 import { buttonClass } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -30,15 +31,12 @@ export default async function DepartmentDetailPage({
   return (
     <main className="flex-1 py-10 sm:py-12">
       <Container>
-        <p className="mb-4 text-sm text-muted">
-          <Link href="/departments" className="hover:text-foreground">
-            Departments
-          </Link>
-          <span aria-hidden className="mx-2">
-            /
-          </span>
-          <span className="text-foreground">{department.name}</span>
-        </p>
+        <Breadcrumb
+          items={[
+            { href: "/departments", label: "Departments" },
+            { label: department.name },
+          ]}
+        />
         <PageHeader
           title={department.name}
           description={

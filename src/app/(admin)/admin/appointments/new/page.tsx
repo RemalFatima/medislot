@@ -12,6 +12,7 @@ import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { WalkInForm } from "../walk-in-form";
 
 export const dynamic = "force-dynamic";
@@ -49,15 +50,12 @@ export default async function NewWalkInPage({
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <p className="mb-4 text-sm text-muted">
-        <Link href="/admin/appointments" className="hover:text-foreground">
-          Appointments
-        </Link>
-        <span aria-hidden className="mx-2">
-          /
-        </span>
-        <span className="text-foreground">Walk-in</span>
-      </p>
+      <Breadcrumb
+        items={[
+          { href: "/admin/appointments", label: "Appointments" },
+          { label: "Walk-in" },
+        ]}
+      />
       <PageHeader
         title="Walk-in"
         description="Uses the same booking lock as online bookings. Confirmed instantly."

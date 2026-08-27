@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SkipLink } from "@/components/ui/skip-link";
 import { getPublicOrganization } from "@/server/tenant/getPublicOrganization";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full min-w-0 flex-col font-sans">
+        <SkipLink />
         {children}
       </body>
     </html>

@@ -31,6 +31,12 @@ export function SiteHeader({
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const menuId = useId();
+  const [menuPath, setMenuPath] = useState(pathname);
+
+  if (pathname !== menuPath) {
+    setMenuPath(pathname);
+    setOpen(false);
+  }
 
   useEffect(() => {
     if (!open) {
@@ -79,7 +85,7 @@ export function SiteHeader({
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm transition-colors",
+                  "rounded-lg px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)",
                   active
                     ? "bg-accent font-medium text-primary"
                     : "text-muted hover:bg-surface-muted hover:text-foreground",
@@ -96,9 +102,10 @@ export function SiteHeader({
 
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-lg text-foreground hover:bg-surface-muted md:hidden"
+          className="inline-flex size-11 items-center justify-center rounded-lg text-foreground hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring) md:hidden"
           aria-expanded={open}
           aria-controls={menuId}
+          aria-haspopup="true"
           onClick={() => setOpen((value) => !value)}
         >
           {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
@@ -119,7 +126,7 @@ export function SiteHeader({
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm",
+                      "flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)",
                       active
                         ? "bg-accent font-medium text-primary"
                         : "text-foreground hover:bg-surface-muted",

@@ -7,6 +7,7 @@ import { DoctorForm } from "../doctor-form";
 import { buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -20,15 +21,12 @@ export default async function NewDoctorPage() {
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <p className="mb-4 text-sm text-muted">
-        <Link href="/admin/doctors" className="hover:text-foreground">
-          Doctors
-        </Link>
-        <span aria-hidden className="mx-2">
-          /
-        </span>
-        <span className="text-foreground">New</span>
-      </p>
+      <Breadcrumb
+        items={[
+          { href: "/admin/doctors", label: "Doctors" },
+          { label: "New" },
+        ]}
+      />
       <PageHeader
         title="New doctor"
         description="Assign departments and services so the doctor can appear in public booking."

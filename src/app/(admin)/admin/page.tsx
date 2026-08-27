@@ -83,7 +83,7 @@ export default async function AdminPage() {
                   <AppointmentStatusBadge status={row.status} />
                   <span className="text-sm font-medium text-foreground">{row.count}</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
+                <div className="h-2 overflow-hidden rounded-full bg-surface-muted" aria-hidden>
                   <div
                     className={cn(
                       "h-2 rounded-full",
@@ -122,7 +122,7 @@ export default async function AdminPage() {
                       {row.count}
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
+                  <div className="h-2 overflow-hidden rounded-full bg-surface-muted" aria-hidden>
                     <div
                       className="h-2 rounded-full bg-primary"
                       style={{ width: `${Math.round((row.count / doctorMax) * 100)}%` }}
@@ -138,7 +138,7 @@ export default async function AdminPage() {
       <section className="mt-6">
         <h2 className="mb-3 text-base font-semibold text-foreground">Catalog</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Link href="/admin/departments">
+          <Link href="/admin/departments" className="block rounded-xl">
             <Card className="p-4 transition-colors hover:border-primary/30">
               <p className="text-sm text-muted">Departments</p>
               <p className="mt-1 text-2xl font-semibold text-foreground">
@@ -146,7 +146,7 @@ export default async function AdminPage() {
               </p>
             </Card>
           </Link>
-          <Link href="/admin/doctors">
+          <Link href="/admin/doctors" className="block rounded-xl">
             <Card className="p-4 transition-colors hover:border-primary/30">
               <p className="text-sm text-muted">Doctors</p>
               <p className="mt-1 text-2xl font-semibold text-foreground">
@@ -154,7 +154,7 @@ export default async function AdminPage() {
               </p>
             </Card>
           </Link>
-          <Link href="/admin/services">
+          <Link href="/admin/services" className="block rounded-xl">
             <Card className="p-4 transition-colors hover:border-primary/30">
               <p className="text-sm text-muted">Services</p>
               <p className="mt-1 text-2xl font-semibold text-foreground">
@@ -162,7 +162,7 @@ export default async function AdminPage() {
               </p>
             </Card>
           </Link>
-          <Link href="/admin/appointments">
+          <Link href="/admin/appointments" className="block rounded-xl">
             <Card className="p-4 transition-colors hover:border-primary/30">
               <p className="text-sm text-muted">Appointments</p>
               <p className="mt-1 text-sm font-medium text-foreground">Open today&apos;s list</p>

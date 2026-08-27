@@ -101,12 +101,13 @@ export default async function AdminServicesPage({
 
           <div className="mt-6 hidden overflow-x-auto lg:block">
             <table className="w-full min-w-176 border-collapse text-sm">
+              <caption className="sr-only">Services</caption>
               <thead>
                 <tr className="border-b border-border text-left text-muted">
-                  <th className="py-3 pr-4 font-medium">Service</th>
-                  <th className="py-3 pr-4 font-medium">Duration</th>
-                  <th className="py-3 pr-4 font-medium">Price</th>
-                  <th className="py-3 font-medium">Status</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Service</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Duration</th>
+                  <th scope="col" className="py-3 pr-4 font-medium">Price</th>
+                  <th scope="col" className="py-3 font-medium">Status</th>
                 </tr>
               </thead>
               <tbody>

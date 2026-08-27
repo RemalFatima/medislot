@@ -11,6 +11,8 @@ export function CopyReference({ value }: { value: string }) {
       type="button"
       variant="secondary"
       size="sm"
+      aria-label={copied ? "Copied confirmation code" : "Copy confirmation code"}
+      aria-live="polite"
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(value);

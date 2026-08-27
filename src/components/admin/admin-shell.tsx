@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { LogOut, Menu, X } from "lucide-react";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,9 @@ function SidebarAccount({
   );
 }
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
 export function AdminShell({
   organizationName,
   logoUrl,
@@ -75,15 +78,50 @@ export function AdminShell({
 }) {
   const [open, setOpen] = useState(false);
   const drawerId = useId();
+  const openButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const wasOpen = useRef(false);
 
   useEffect(() => {
     if (!open) {
+      if (wasOpen.current) {
+        openButtonRef.current?.focus();
+        wasOpen.current = false;
+      }
       return;
     }
+
+    wasOpen.current = true;
+    closeButtonRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab" || !drawerRef.current) {
+        return;
+      }
+
+      const nodes = [
+        ...drawerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
+      ].filter((node) => !node.hasAttribute("disabled") && node.tabIndex !== -1);
+
+      if (nodes.length === 0) {
+        return;
+      }
+
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
 
@@ -103,11 +141,13 @@ export function AdminShell({
     <div className="min-h-full min-w-0 bg-background">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-surface px-4 lg:hidden">
         <Button
+          ref={openButtonRef}
           variant="ghost"
           size="sm"
           className="h-11 w-11 shrink-0 px-0"
           aria-expanded={open}
           aria-controls={drawerId}
+          aria-haspopup="dialog"
           onClick={() => setOpen(true)}
         >
           <Menu className="size-5" aria-hidden />
@@ -121,12 +161,16 @@ export function AdminShell({
           type="button"
           className="fixed inset-0 z-40 bg-foreground/30 lg:hidden"
           aria-label="Close navigation"
+          tabIndex={-1}
           onClick={close}
         />
       ) : null}
 
       <aside
+        ref={drawerRef}
         id={drawerId}
+        role={open ? "dialog" : undefined}
+        aria-modal={open ? true : undefined}
         aria-label="Staff navigation"
         inert={!open}
         className={cn(
@@ -137,6 +181,7 @@ export function AdminShell({
         <div className="flex h-14 items-center justify-between gap-2 border-b border-border px-4">
           <SidebarBrand organizationName={organizationName} logoUrl={logoUrl} />
           <Button
+            ref={closeButtonRef}
             variant="ghost"
             size="sm"
             className="h-11 w-11 shrink-0 px-0"
@@ -169,7 +214,9 @@ export function AdminShell({
         />
       </aside>
 
-      <div className="min-w-0 lg:pl-72">{children}</div>
+      <div id="main-content" tabIndex={-1} className="min-w-0 lg:pl-72">
+        {children}
+      </div>
     </div>
   );
 }

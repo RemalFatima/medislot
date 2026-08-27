@@ -15,7 +15,7 @@ export default function RootError({
   reset?: () => void;
 }) {
   return (
-    <main className="flex flex-1 items-center justify-center">
+    <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center">
       <ErrorState
         title="Something went wrong"
         description={humanErrorMessage(error)}

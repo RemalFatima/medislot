@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VisibilityBadge } from "@/components/admin/visibility-badge";
 import { canManageCatalog } from "@/server/auth/permissions";
@@ -9,6 +8,7 @@ import { listServices } from "@/server/catalog/services";
 import { listDoctorAvailability } from "@/server/scheduling/availability";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
 import { PageHeader } from "@/components/ui/page-header";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { DoctorForm } from "../doctor-form";
 import { WeeklyHoursForm } from "../weekly-hours-form";
 
@@ -37,15 +37,12 @@ export default async function EditDoctorPage({
 
   return (
     <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <p className="mb-4 text-sm text-muted">
-        <Link href="/admin/doctors" className="hover:text-foreground">
-          Doctors
-        </Link>
-        <span aria-hidden className="mx-2">
-          /
-        </span>
-        <span className="text-foreground">{doctor.full_name}</span>
-      </p>
+      <Breadcrumb
+        items={[
+          { href: "/admin/doctors", label: "Doctors" },
+          { label: doctor.full_name },
+        ]}
+      />
       <PageHeader
         title={doctor.full_name}
         description="Profile, departments, services, and weekly hours. Uncheck Active to hide the public profile."

@@ -11,6 +11,7 @@ export function PageSkeleton({
   return (
     <div
       className={cn(compact ? "py-6" : "py-10", className)}
+      role="status"
       aria-busy="true"
       aria-live="polite"
     >
