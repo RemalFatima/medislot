@@ -2,12 +2,16 @@
 
 import { useActionState } from "react";
 import { allowedStatusTransitions } from "@/domain/appointments/status";
+import { Button } from "@/components/ui/button";
 import { APPOINTMENT_STATUS_LABELS } from "@/server/appointments/labels";
 import type { AppointmentStatus } from "@/types/database";
 import type { CatalogFormState } from "../form-utils";
 import { updateAppointmentStatusAction } from "./actions";
 
 const initialState: CatalogFormState = {};
+
+const selectClass =
+  "h-9 w-full min-w-0 rounded-lg border border-border bg-surface px-2 text-sm text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-(--ring) sm:w-40";
 
 export function StatusForm({
   id,
@@ -23,38 +27,26 @@ export function StatusForm({
   );
 
   if (next.length === 0) {
-    return (
-      <span className="text-xs text-zinc-500">
-        {APPOINTMENT_STATUS_LABELS[status]}
-      </span>
-    );
+    return <p className="text-xs text-muted">No further actions</p>;
   }
 
   return (
-    <form action={formAction} className="flex flex-col items-end gap-1">
+    <form action={formAction} className="flex w-full flex-col items-stretch gap-1 sm:w-auto sm:items-end">
       <input type="hidden" name="id" value={id} />
       <div className="flex gap-2">
-        <select
-          name="status"
-          defaultValue={next[0]}
-          className="h-9 rounded-md border border-zinc-300 bg-white px-2 text-xs text-zinc-900"
-        >
+        <select name="status" defaultValue={next[0]} className={selectClass}>
           {next.map((value) => (
             <option key={value} value={value}>
               {APPOINTMENT_STATUS_LABELS[value]}
             </option>
           ))}
         </select>
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-9 rounded-md border border-zinc-300 px-2 text-xs text-zinc-800 hover:bg-zinc-50 disabled:opacity-60"
-        >
+        <Button type="submit" variant="secondary" size="sm" disabled={pending}>
           {pending ? "Saving…" : "Update"}
-        </button>
+        </Button>
       </div>
       {state.error ? (
-        <p className="text-xs text-red-700" role="alert">
+        <p className="text-xs text-danger" role="alert">
           {state.error}
         </p>
       ) : null}

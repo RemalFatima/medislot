@@ -1,16 +1,22 @@
 import Link from "next/link";
 import { calendarDateInTimeZone } from "@/domain/availability/timezone";
+import { AppointmentStatusBadge } from "@/components/admin/appointment-status-badge";
+import { AppointmentsFilters } from "@/components/admin/appointments-filters";
 import { requireStaff } from "@/server/auth/requireStaff";
-import { formatAppointmentWhen } from "@/server/appointments/format";
 import {
-  APPOINTMENT_SOURCE_LABELS,
-  APPOINTMENT_STATUS_LABELS,
-} from "@/server/appointments/labels";
+  formatAppointmentTime,
+  formatAppointmentWhen,
+} from "@/server/appointments/format";
+import { APPOINTMENT_SOURCE_LABELS } from "@/server/appointments/labels";
 import { listAppointments } from "@/server/appointments/list";
 import { listDoctors } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
-import { fieldClass } from "@/components/ui/field";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import type { AppointmentStatus } from "@/types/database";
 import { StatusForm } from "./status-form";
 
@@ -23,6 +29,17 @@ const STATUSES: AppointmentStatus[] = [
   "cancelled",
   "no_show",
 ];
+
+function formatIsoDate(date: string): string {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
 
 export default async function AdminAppointmentsPage({
   searchParams,
@@ -38,116 +55,170 @@ export default async function AdminAppointmentsPage({
       ? filters.date
       : today;
   const status = STATUSES.find((value) => value === filters.status);
+  const doctorId = filters.doctor || undefined;
   const [doctors, services, appointments] = await Promise.all([
     listDoctors(),
     listServices(),
     listAppointments({
       date,
       timezone,
-      doctorId: filters.doctor || undefined,
+      doctorId,
       status,
     }),
   ]);
   const doctorName = new Map(doctors.map((doctor) => [doctor.id, doctor.full_name]));
   const serviceName = new Map(services.map((service) => [service.id, service.name]));
+  const isToday = date === today;
+  const hasExtraFilters = Boolean(doctorId || status);
+  const todayHref = hasExtraFilters
+    ? `/admin/appointments?date=${today}${doctorId ? `&doctor=${doctorId}` : ""}${status ? `&status=${status}` : ""}`
+    : "/admin/appointments";
 
   return (
-    <main className="px-6 py-8">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
-            Appointments
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">Times in {timezone}</p>
-        </div>
-        <Link
-          href="/admin/appointments/new"
-          className="rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-        >
-          Walk-in
-        </Link>
-      </div>
+    <main className="px-4 py-6 sm:px-6 lg:px-8">
+      <PageHeader
+        title="Appointments"
+        description={`${formatIsoDate(date)}${isToday ? " · Today" : ""} · times in ${timezone.replace(/_/g, " ")}`}
+        actions={
+          <div className="flex flex-wrap gap-2">
+            {isToday ? null : (
+              <Link href={todayHref} className={buttonClass({ variant: "secondary" })}>
+                Today
+              </Link>
+            )}
+            <Link href="/admin/appointments/new" className={buttonClass()}>
+              Walk-in
+            </Link>
+          </div>
+        }
+      />
 
-      <form className="grid gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:grid-cols-4">
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Date</span>
-          <input
-            type="date"
-            name="date"
-            defaultValue={date}
-            className={`${fieldClass} w-full`}
-          />
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Doctor</span>
-          <select
-            name="doctor"
-            defaultValue={filters.doctor ?? ""}
-            className={`${fieldClass} w-full`}
-          >
-            <option value="">All</option>
-            {doctors.map((doctor) => (
-              <option key={doctor.id} value={doctor.id}>
-                {doctor.full_name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Status</span>
-          <select
-            name="status"
-            defaultValue={status ?? ""}
-            className={`${fieldClass} w-full`}
-          >
-            <option value="">All</option>
-            {STATUSES.map((value) => (
-              <option key={value} value={value}>
-                {APPOINTMENT_STATUS_LABELS[value]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="flex items-end">
-          <button
-            type="submit"
-            className="h-11 w-full rounded-md border border-zinc-300 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
-          >
-            Filter
-          </button>
-        </div>
-      </form>
+      <Card className="p-4 sm:p-5">
+        <AppointmentsFilters
+          date={date}
+          doctorId={doctorId}
+          status={status}
+          doctors={doctors}
+        />
+      </Card>
 
       {appointments.length === 0 ? (
-        <p className="mt-6 text-sm text-zinc-600">No appointments on this day.</p>
+        <EmptyState
+          className="mt-6"
+          title="No appointments on this day"
+          description={
+            hasExtraFilters
+              ? "Try another date, doctor, or status."
+              : "Walk-in visits and online bookings for this date will appear here."
+          }
+          action={
+            <Link href="/admin/appointments/new" className={buttonClass({ variant: "secondary" })}>
+              Create walk-in
+            </Link>
+          }
+        />
       ) : (
-        <ul className="mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
-          {appointments.map((appointment) => (
-            <li
-              key={appointment.id}
-              className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <p className="font-medium text-zinc-950">
-                  {formatAppointmentWhen(appointment.start_at, timezone)}
-                </p>
-                <p className="text-sm text-zinc-700">
-                  {appointment.patient_name} · {appointment.patient_phone}
-                </p>
-                <p className="text-xs text-zinc-500">
-                  {doctorName.get(appointment.doctor_id) ?? "Doctor"} ·{" "}
-                  {serviceName.get(appointment.service_id) ?? "Service"} ·{" "}
-                  {APPOINTMENT_SOURCE_LABELS[appointment.source]} ·{" "}
-                  {APPOINTMENT_STATUS_LABELS[appointment.status]}
-                </p>
-                {appointment.notes ? (
-                  <p className="mt-1 text-sm text-zinc-600">{appointment.notes}</p>
-                ) : null}
-              </div>
-              <StatusForm id={appointment.id} status={appointment.status} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <p className="mt-6 text-sm text-muted">
+            {appointments.length === 1
+              ? "1 appointment"
+              : `${appointments.length} appointments`}
+            {isToday ? " today" : ""}
+          </p>
+
+          <ul className="mt-3 grid gap-3 lg:hidden">
+            {appointments.map((appointment) => (
+              <li key={appointment.id}>
+                <Card className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-lg font-semibold tabular-nums text-foreground">
+                        {formatAppointmentTime(appointment.start_at, timezone)}
+                      </p>
+                      <p className="mt-1 font-medium text-foreground">
+                        {appointment.patient_name}
+                      </p>
+                      <p className="text-sm text-muted">{appointment.patient_phone}</p>
+                    </div>
+                    <AppointmentStatusBadge status={appointment.status} />
+                  </div>
+                  <p className="mt-3 text-sm text-muted">
+                    {doctorName.get(appointment.doctor_id) ?? "Doctor"} ·{" "}
+                    {serviceName.get(appointment.service_id) ?? "Service"}
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <Badge tone={appointment.source === "public" ? "primary" : "neutral"}>
+                      {APPOINTMENT_SOURCE_LABELS[appointment.source]}
+                    </Badge>
+                    <span className="truncate font-mono text-xs text-muted">
+                      {appointment.confirmation_token}
+                    </span>
+                  </div>
+                  {appointment.notes ? (
+                    <p className="mt-2 text-sm text-muted">{appointment.notes}</p>
+                  ) : null}
+                  <div className="mt-4">
+                    <StatusForm id={appointment.id} status={appointment.status} />
+                  </div>
+                </Card>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-3 hidden overflow-x-auto lg:block">
+            <table className="w-full min-w-176 border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-muted">
+                  <th className="py-3 pr-4 font-medium">Time</th>
+                  <th className="py-3 pr-4 font-medium">Patient</th>
+                  <th className="py-3 pr-4 font-medium">Doctor</th>
+                  <th className="py-3 pr-4 font-medium">Service</th>
+                  <th className="py-3 pr-4 font-medium">Source</th>
+                  <th className="py-3 pr-4 font-medium">Status</th>
+                  <th className="py-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointments.map((appointment) => (
+                  <tr key={appointment.id} className="border-b border-border align-top">
+                    <td className="py-3 pr-4">
+                      <p className="font-semibold tabular-nums text-foreground">
+                        {formatAppointmentTime(appointment.start_at, timezone)}
+                      </p>
+                      <p className="text-xs text-muted">
+                        {formatAppointmentWhen(appointment.start_at, timezone)}
+                      </p>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <p className="font-medium text-foreground">{appointment.patient_name}</p>
+                      <p className="text-muted">{appointment.patient_phone}</p>
+                      {appointment.notes ? (
+                        <p className="mt-1 text-muted">{appointment.notes}</p>
+                      ) : null}
+                    </td>
+                    <td className="py-3 pr-4 text-foreground">
+                      {doctorName.get(appointment.doctor_id) ?? "Doctor"}
+                    </td>
+                    <td className="py-3 pr-4 text-foreground">
+                      {serviceName.get(appointment.service_id) ?? "Service"}
+                    </td>
+                    <td className="py-3 pr-4">
+                      <Badge tone={appointment.source === "public" ? "primary" : "neutral"}>
+                        {APPOINTMENT_SOURCE_LABELS[appointment.source]}
+                      </Badge>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <AppointmentStatusBadge status={appointment.status} />
+                    </td>
+                    <td className="py-3">
+                      <StatusForm id={appointment.id} status={appointment.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </main>
   );
