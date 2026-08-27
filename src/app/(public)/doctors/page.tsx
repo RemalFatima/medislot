@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listDepartments } from "@/server/catalog/departments";
 import {
   listDoctorProfessions,
@@ -5,22 +6,51 @@ import {
   listDoctorSpecializations,
 } from "@/server/catalog/doctors";
 import { DoctorCard } from "@/components/public/doctor-card";
+import { DoctorsFilters } from "@/components/public/doctors-filters";
+import { buttonClass } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
+
+function matchesQuery(
+  doctor: {
+    full_name: string;
+    profession: string;
+    specialization: string | null;
+    departments: { name: string }[];
+  },
+  query: string,
+) {
+  const haystack = [
+    doctor.full_name,
+    doctor.profession,
+    doctor.specialization ?? "",
+    ...doctor.departments.map((department) => department.name),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return haystack.includes(query.toLowerCase());
+}
 
 export default async function DoctorsPage({
   searchParams,
 }: {
   searchParams: Promise<{
+    q?: string;
     department?: string;
     profession?: string;
     specialization?: string;
   }>;
 }) {
-  const filters = await searchParams;
-  const departmentSlug = filters.department?.trim() || undefined;
-  const profession = filters.profession?.trim() || undefined;
-  const specialization = filters.specialization?.trim() || undefined;
+  const params = await searchParams;
+  const query = params.q?.trim() || undefined;
+  const departmentSlug = params.department?.trim() || undefined;
+  const profession = params.profession?.trim() || undefined;
+  const specialization = params.specialization?.trim() || undefined;
+  const hasFilters = Boolean(query || departmentSlug || profession || specialization);
 
   const [departments, professions, specializations, doctors] = await Promise.all([
     listDepartments({ activeOnly: true }),
@@ -34,77 +64,70 @@ export default async function DoctorsPage({
     }),
   ]);
 
+  const visibleDoctors = query
+    ? doctors.filter((doctor) => matchesQuery(doctor, query))
+    : doctors;
+
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-12">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
-        Doctors
-      </h1>
-      <form className="mt-6 grid gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:grid-cols-4">
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Department</span>
-          <select
-            name="department"
-            defaultValue={departmentSlug ?? ""}
-            className="h-10 w-full rounded-md border border-zinc-300 bg-white px-2"
-          >
-            <option value="">All</option>
-            {departments.map((department) => (
-              <option key={department.id} value={department.slug}>
-                {department.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Profession</span>
-          <select
-            name="profession"
-            defaultValue={profession ?? ""}
-            className="h-10 w-full rounded-md border border-zinc-300 bg-white px-2"
-          >
-            <option value="">All</option>
-            {professions.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Specialization</span>
-          <select
-            name="specialization"
-            defaultValue={specialization ?? ""}
-            className="h-10 w-full rounded-md border border-zinc-300 bg-white px-2"
-          >
-            <option value="">All</option>
-            {specializations.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="flex items-end">
-          <button
-            type="submit"
-            className="h-10 w-full rounded-md bg-zinc-900 text-sm font-medium text-white hover:bg-zinc-800"
-          >
-            Filter
-          </button>
-        </div>
-      </form>
-      {doctors.length === 0 ? (
-        <p className="mt-6 text-sm text-zinc-600">No doctors match these filters.</p>
-      ) : (
-        <ul className="mt-6 grid gap-3">
-          {doctors.map((doctor) => (
-            <li key={doctor.id}>
-              <DoctorCard doctor={doctor} />
-            </li>
-          ))}
-        </ul>
-      )}
+    <main className="flex-1 py-10 sm:py-12">
+      <Container>
+        <PageHeader
+          title="Doctors"
+          description="Search by name or filter by department, profession, and specialization."
+        />
+        <DoctorsFilters
+          departments={departments}
+          professions={professions}
+          specializations={specializations}
+          filters={{
+            q: query,
+            department: departmentSlug,
+            profession,
+            specialization,
+          }}
+        />
+        {visibleDoctors.length === 0 ? (
+          <EmptyState
+            className="mt-8"
+            title={
+              hasFilters
+                ? "No doctors match these filters"
+                : "No doctors have been published yet"
+            }
+            description={
+              hasFilters
+                ? "Try a different name or clear the filters to see everyone."
+                : "Doctor profiles will appear here once the clinic publishes them."
+            }
+            action={
+              hasFilters ? (
+                <Link href="/doctors" className={buttonClass({ variant: "secondary" })}>
+                  Clear filters
+                </Link>
+              ) : (
+                <Link href="/departments" className={buttonClass({ variant: "secondary" })}>
+                  Browse departments
+                </Link>
+              )
+            }
+          />
+        ) : (
+          <>
+            <p className="mt-6 text-sm text-muted">
+              {visibleDoctors.length === 1
+                ? "1 doctor"
+                : `${visibleDoctors.length} doctors`}
+            </p>
+            <ul className="mt-3 grid gap-4 md:grid-cols-2">
+              {visibleDoctors.map((doctor) => (
+                <li key={doctor.id}>
+                  <DoctorCard doctor={doctor} />
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </Container>
     </main>
   );
 }

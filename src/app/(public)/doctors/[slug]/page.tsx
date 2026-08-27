@@ -1,12 +1,15 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getDoctorBySlug } from "@/server/catalog/doctors";
 import { listDoctorAvailability } from "@/server/scheduling/availability";
-import {
-  timeInputValue,
-  WEEKDAYS,
-} from "@/server/scheduling/constants";
+import { timeInputValue, WEEKDAYS } from "@/server/scheduling/constants";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
+import { doctorInitials } from "@/components/public/doctor-card";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const dynamic = "force-dynamic";
 
@@ -27,125 +30,198 @@ export default async function DoctorProfilePage({
     getOrganizationTimezone(),
   ]);
 
+  const canBook = doctor.services.length > 0;
+  const bookHref = `/doctors/${doctor.slug}/book`;
+  const details = [
+    doctor.qualifications
+      ? { label: "Qualifications", value: doctor.qualifications }
+      : null,
+    doctor.experience_years !== null
+      ? { label: "Experience", value: `${doctor.experience_years} years` }
+      : null,
+    doctor.consultation_fee !== null
+      ? { label: "Consultation fee", value: String(doctor.consultation_fee) }
+      : null,
+  ].filter((item): item is { label: string; value: string } => item != null);
+
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-12">
-      <div className="flex gap-5">
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 text-xl font-semibold text-zinc-500">
-          {doctor.photo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={doctor.photo_url}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            doctor.full_name.slice(0, 1)
-          )}
-        </div>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
-            {doctor.full_name}
-          </h1>
-          <p className="mt-1 text-zinc-600">
-            {doctor.profession}
-            {doctor.specialization ? ` · ${doctor.specialization}` : ""}
-          </p>
-          {doctor.departments.length > 0 ? (
-            <p className="mt-2 text-sm text-zinc-500">
-              {doctor.departments.map((department) => department.name).join(", ")}
-            </p>
-          ) : null}
-        </div>
-      </div>
+    <main className="flex-1 py-10 sm:py-12">
+      <Container className="max-w-4xl">
+        <p className="mb-4 text-sm text-muted">
+          <Link href="/doctors" className="hover:text-foreground">
+            Doctors
+          </Link>
+          <span aria-hidden className="mx-2">
+            /
+          </span>
+          <span className="text-foreground">{doctor.full_name}</span>
+        </p>
 
-      {doctor.bio ? (
-        <p className="mt-8 whitespace-pre-wrap text-zinc-700">{doctor.bio}</p>
-      ) : null}
-
-      <dl className="mt-8 grid gap-3 text-sm sm:grid-cols-2">
-        {doctor.qualifications ? (
-          <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
-            <dt className="text-zinc-500">Qualifications</dt>
-            <dd className="mt-1 text-zinc-900">{doctor.qualifications}</dd>
+        <Card className="p-5 sm:p-6">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+            <div className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-accent text-2xl font-semibold text-primary">
+              {doctor.photo_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={doctor.photo_url}
+                  alt=""
+                  className="size-full object-cover"
+                />
+              ) : (
+                doctorInitials(doctor.full_name)
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                {doctor.full_name}
+              </h1>
+              <p className="mt-1 text-muted">
+                {doctor.profession}
+                {doctor.specialization ? ` · ${doctor.specialization}` : ""}
+              </p>
+              {doctor.departments.length > 0 ? (
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {doctor.departments.map((department) => (
+                    <li key={department.id}>
+                      <Link href={`/departments/${department.slug}`}>
+                        <Badge tone="primary">{department.name}</Badge>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+            {canBook ? (
+              <Link
+                href={bookHref}
+                className={buttonClass({ className: "w-full shrink-0 sm:w-auto" })}
+              >
+                Book appointment
+              </Link>
+            ) : null}
           </div>
-        ) : null}
-        {doctor.experience_years !== null ? (
-          <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
-            <dt className="text-zinc-500">Experience</dt>
-            <dd className="mt-1 text-zinc-900">{doctor.experience_years} years</dd>
-          </div>
-        ) : null}
-        {doctor.consultation_fee !== null ? (
-          <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
-            <dt className="text-zinc-500">Consultation fee</dt>
-            <dd className="mt-1 text-zinc-900">{doctor.consultation_fee}</dd>
-          </div>
-        ) : null}
-      </dl>
+        </Card>
 
-      {windows.length > 0 ? (
-        <section className="mt-10">
-          <h2 className="text-lg font-semibold text-zinc-950">Weekly hours</h2>
-          <p className="mt-1 text-sm text-zinc-500">Times in {timezone}</p>
-          <ul className="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
-            {WEEKDAYS.map((day) => {
-              const dayWindows = windows.filter(
-                (window) => window.weekday === day.value,
-              );
-              if (dayWindows.length === 0) {
-                return null;
-              }
+        {doctor.bio ? (
+          <section className="mt-6">
+            <Card className="p-5 sm:p-6">
+              <h2 className="text-lg font-semibold text-foreground">About</h2>
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-muted">
+                {doctor.bio}
+              </p>
+            </Card>
+          </section>
+        ) : null}
 
-              return (
-                <li
-                  key={day.value}
-                  className="flex justify-between px-4 py-3 text-sm"
+        {details.length > 0 ? (
+          <section className="mt-6">
+            <dl className="grid gap-3 sm:grid-cols-2">
+              {details.map((item) => (
+                <div key={item.label}>
+                  <Card className="h-full px-4 py-3">
+                    <dt className="text-sm text-muted">{item.label}</dt>
+                    <dd className="mt-1 text-sm text-foreground">{item.value}</dd>
+                  </Card>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ) : null}
+
+        <section className="mt-6">
+          <Card className="p-5 sm:p-6">
+            <h2 className="text-lg font-semibold text-foreground">Weekly hours</h2>
+            <p className="mt-1 text-sm text-muted">Times shown in {timezone}.</p>
+            {windows.length === 0 ? (
+              <p className="mt-4 text-sm text-muted">
+                Weekly hours have not been published for this doctor yet.
+              </p>
+            ) : (
+              <ul className="mt-4 divide-y divide-border rounded-lg border border-border">
+                {WEEKDAYS.map((day) => {
+                  const dayWindows = windows.filter(
+                    (window) => window.weekday === day.value,
+                  );
+
+                  return (
+                    <li
+                      key={day.value}
+                      className="flex flex-col gap-1 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <span className="font-medium text-foreground">{day.label}</span>
+                      <span className="text-muted">
+                        {dayWindows.length === 0
+                          ? "Not scheduled"
+                          : dayWindows
+                              .map(
+                                (window) =>
+                                  `${timeInputValue(window.start_time)}–${timeInputValue(window.end_time)}`,
+                              )
+                              .join(", ")}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </Card>
+        </section>
+
+        <section className="mt-6">
+          <Card className="p-5 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-foreground">Services</h2>
+                <p className="mt-1 text-sm text-muted">
+                  Choose a service when you book.
+                </p>
+              </div>
+              {canBook ? (
+                <Link
+                  href={bookHref}
+                  className={buttonClass({ className: "w-full sm:w-auto" })}
                 >
-                  <span className="text-zinc-900">{day.label}</span>
-                  <span className="text-zinc-500">
-                    {dayWindows
-                      .map(
-                        (window) =>
-                          `${timeInputValue(window.start_time)}–${timeInputValue(window.end_time)}`,
-                      )
-                      .join(", ")}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
-
-      {doctor.services.length > 0 ? (
-        <section className="mt-10">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-zinc-950">Services</h2>
-            <Link
-              href={`/doctors/${doctor.slug}/book`}
-              className="rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-            >
-              Book appointment
-            </Link>
-          </div>
-          <ul className="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
-            {doctor.services.map((service) => (
-              <li key={service.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
-                <span className="text-zinc-900">{service.name}</span>
-                <span className="flex items-center gap-3">
-                  <span className="text-zinc-500">{service.duration_minutes} min</span>
-                  <Link
-                    href={`/doctors/${doctor.slug}/book?service=${service.id}`}
-                    className="text-zinc-900 underline-offset-2 hover:underline"
+                  Book appointment
+                </Link>
+              ) : null}
+            </div>
+            {doctor.services.length === 0 ? (
+              <EmptyState
+                className="mt-4"
+                title="No bookable services yet"
+                description="This doctor does not have services assigned for online booking."
+              />
+            ) : (
+              <ul className="mt-4 divide-y divide-border rounded-lg border border-border">
+                {doctor.services.map((service) => (
+                  <li
+                    key={service.id}
+                    className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
-                    Book
-                  </Link>
-                </span>
-              </li>
-            ))}
-          </ul>
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground">{service.name}</p>
+                      <p className="mt-0.5 text-sm text-muted">
+                        {service.duration_minutes} min
+                        {service.price !== null ? ` · ${service.price}` : ""}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/doctors/${doctor.slug}/book?service=${service.id}`}
+                      className={buttonClass({
+                        variant: "secondary",
+                        size: "sm",
+                        className: "w-full shrink-0 sm:w-auto",
+                      })}
+                    >
+                      Book this service
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
         </section>
-      ) : null}
+      </Container>
     </main>
   );
 }
