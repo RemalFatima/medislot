@@ -2,7 +2,9 @@
 
 import { useActionState } from "react";
 import type { Service } from "@/server/catalog/services";
-import { Field, fieldClass, textareaClass } from "@/components/ui/field";
+import { FormError } from "@/components/admin/form-error";
+import { Button } from "@/components/ui/button";
+import { checkboxClass, Field, fieldClass, textareaClass } from "@/components/ui/field";
 import type { CatalogFormState } from "../form-utils";
 import { createServiceAction, updateServiceAction } from "./actions";
 
@@ -30,7 +32,7 @@ export function ServiceForm({
           className={fieldClass}
         />
       </Field>
-      <Field label="Description">
+      <Field label="Description" hint="Optional note for clinic staff.">
         <textarea
           name="description"
           rows={4}
@@ -39,50 +41,52 @@ export function ServiceForm({
           className={textareaClass}
         />
       </Field>
-      <Field label="Duration (minutes)">
-        <input
-          type="number"
-          name="duration_minutes"
-          min={1}
-          required
-          defaultValue={service?.duration_minutes ?? 15}
-          disabled={readOnly}
-          className={fieldClass}
-        />
-      </Field>
-      <Field label="Price (optional)">
-        <input
-          type="number"
-          name="price"
-          min={0}
-          step="0.01"
-          defaultValue={service?.price ?? ""}
-          disabled={readOnly}
-          className={fieldClass}
-        />
-      </Field>
-      <label className="flex items-center gap-2 text-sm text-zinc-800">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Duration (minutes)" hint="Used to calculate available slots.">
+          <input
+            type="number"
+            name="duration_minutes"
+            min={1}
+            required
+            defaultValue={service?.duration_minutes ?? 15}
+            disabled={readOnly}
+            className={fieldClass}
+          />
+        </Field>
+        <Field label="Price (optional)">
+          <input
+            type="number"
+            name="price"
+            min={0}
+            step="0.01"
+            defaultValue={service?.price ?? ""}
+            disabled={readOnly}
+            className={fieldClass}
+          />
+        </Field>
+      </div>
+      <label className="flex items-start gap-2.5 text-sm text-foreground">
         <input
           type="checkbox"
           name="is_active"
           defaultChecked={service?.is_active ?? true}
           disabled={readOnly}
+          className={`mt-0.5 ${checkboxClass}`}
         />
-        Active
+        <span>
+          Active
+          <span className="mt-0.5 block text-xs text-muted">
+            Hidden services cannot be booked online.
+          </span>
+        </span>
       </label>
-      {state.error ? (
-        <p className="text-sm text-red-700" role="alert">
-          {state.error}
-        </p>
-      ) : null}
-      {readOnly ? null : (
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-11 rounded-md bg-zinc-900 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
-        >
+      <FormError message={state.error} />
+      {readOnly ? (
+        <p className="text-sm text-muted">Only owners and admins can edit services.</p>
+      ) : (
+        <Button type="submit" disabled={pending} className="w-full sm:w-auto">
           {pending ? "Saving…" : service ? "Save service" : "Create service"}
-        </button>
+        </Button>
       )}
     </form>
   );

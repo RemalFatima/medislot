@@ -2,7 +2,9 @@
 
 import { useActionState } from "react";
 import type { Department } from "@/server/catalog/departments";
-import { Field, fieldClass, textareaClass } from "@/components/ui/field";
+import { FormError } from "@/components/admin/form-error";
+import { Button } from "@/components/ui/button";
+import { checkboxClass, Field, fieldClass, textareaClass } from "@/components/ui/field";
 import type { CatalogFormState } from "../form-utils";
 import {
   createDepartmentAction,
@@ -33,7 +35,7 @@ export function DepartmentForm({
           className={fieldClass}
         />
       </Field>
-      <Field label="Description">
+      <Field label="Description" hint="Shown on the public departments page.">
         <textarea
           name="description"
           rows={4}
@@ -42,7 +44,7 @@ export function DepartmentForm({
           className={textareaClass}
         />
       </Field>
-      <Field label="Display order">
+      <Field label="Display order" hint="Lower numbers appear first.">
         <input
           type="number"
           name="sort_order"
@@ -52,28 +54,28 @@ export function DepartmentForm({
           className={fieldClass}
         />
       </Field>
-      <label className="flex items-center gap-2 text-sm text-zinc-800">
+      <label className="flex items-start gap-2.5 text-sm text-foreground">
         <input
           type="checkbox"
           name="is_active"
           defaultChecked={department?.is_active ?? true}
           disabled={readOnly}
+          className={`mt-0.5 ${checkboxClass}`}
         />
-        Active (visible on the public site)
+        <span>
+          Active
+          <span className="mt-0.5 block text-xs text-muted">
+            Hidden departments are not shown on the public site.
+          </span>
+        </span>
       </label>
-      {state.error ? (
-        <p className="text-sm text-red-700" role="alert">
-          {state.error}
-        </p>
-      ) : null}
-      {readOnly ? null : (
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-11 rounded-md bg-zinc-900 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
-        >
+      <FormError message={state.error} />
+      {readOnly ? (
+        <p className="text-sm text-muted">Only owners and admins can edit departments.</p>
+      ) : (
+        <Button type="submit" disabled={pending} className="w-full sm:w-auto">
           {pending ? "Saving…" : department ? "Save department" : "Create department"}
-        </button>
+        </Button>
       )}
     </form>
   );

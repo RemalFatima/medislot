@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { VisibilityBadge } from "@/components/admin/visibility-badge";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { listDepartments } from "@/server/catalog/departments";
@@ -6,6 +8,7 @@ import { getDoctorById } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
 import { listDoctorAvailability } from "@/server/scheduling/availability";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
+import { PageHeader } from "@/components/ui/page-header";
 import { DoctorForm } from "../doctor-form";
 import { WeeklyHoursForm } from "../weekly-hours-form";
 
@@ -30,23 +33,36 @@ export default async function EditDoctorPage({
     notFound();
   }
 
+  const canManage = canManageCatalog(staff.role);
+
   return (
-    <main className="px-6 py-8">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-950">
-        {doctor.full_name}
-      </h1>
+    <main className="px-4 py-6 sm:px-6 lg:px-8">
+      <p className="mb-4 text-sm text-muted">
+        <Link href="/admin/doctors" className="hover:text-foreground">
+          Doctors
+        </Link>
+        <span aria-hidden className="mx-2">
+          /
+        </span>
+        <span className="text-foreground">{doctor.full_name}</span>
+      </p>
+      <PageHeader
+        title={doctor.full_name}
+        description="Profile, departments, services, and weekly hours. Uncheck Active to hide the public profile."
+        actions={<VisibilityBadge active={doctor.is_active} />}
+      />
       <DoctorForm
         doctor={doctor}
         departments={departments}
         services={services}
-        readOnly={!canManageCatalog(staff.role)}
+        readOnly={!canManage}
       />
       <WeeklyHoursForm
         key={windows.map((window) => window.id).join()}
         doctorId={doctor.id}
         windows={windows}
         timezone={timezone}
-        readOnly={!canManageCatalog(staff.role)}
+        readOnly={!canManage}
       />
     </main>
   );

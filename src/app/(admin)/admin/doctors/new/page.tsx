@@ -1,8 +1,12 @@
+import Link from "next/link";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { listDepartments } from "@/server/catalog/departments";
 import { listServices } from "@/server/catalog/services";
 import { DoctorForm } from "../doctor-form";
+import { buttonClass } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +19,20 @@ export default async function NewDoctorPage() {
   ]);
 
   return (
-    <main className="px-6 py-8">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-950">
-        New doctor
-      </h1>
+    <main className="px-4 py-6 sm:px-6 lg:px-8">
+      <p className="mb-4 text-sm text-muted">
+        <Link href="/admin/doctors" className="hover:text-foreground">
+          Doctors
+        </Link>
+        <span aria-hidden className="mx-2">
+          /
+        </span>
+        <span className="text-foreground">New</span>
+      </p>
+      <PageHeader
+        title="New doctor"
+        description="Assign departments and services so the doctor can appear in public booking."
+      />
       {canManage ? (
         <DoctorForm
           departments={departments}
@@ -26,9 +40,15 @@ export default async function NewDoctorPage() {
           readOnly={false}
         />
       ) : (
-        <p className="text-sm text-zinc-600">
-          Only owners and admins can add doctors.
-        </p>
+        <EmptyState
+          title="You cannot add doctors"
+          description="Only owners and admins can change the catalog."
+          action={
+            <Link href="/admin/doctors" className={buttonClass({ variant: "secondary" })}>
+              Back to doctors
+            </Link>
+          }
+        />
       )}
     </main>
   );

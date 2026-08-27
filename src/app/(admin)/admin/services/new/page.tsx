@@ -1,6 +1,11 @@
+import Link from "next/link";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { ServiceForm } from "../service-form";
+import { buttonClass } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -9,16 +14,34 @@ export default async function NewServicePage() {
   const canManage = canManageCatalog(staff.role);
 
   return (
-    <main className="px-6 py-8">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-950">
-        New service
-      </h1>
+    <main className="px-4 py-6 sm:px-6 lg:px-8">
+      <p className="mb-4 text-sm text-muted">
+        <Link href="/admin/services" className="hover:text-foreground">
+          Services
+        </Link>
+        <span aria-hidden className="mx-2">
+          /
+        </span>
+        <span className="text-foreground">New</span>
+      </p>
+      <PageHeader
+        title="New service"
+        description="Duration is used when calculating available appointment times."
+      />
       {canManage ? (
-        <ServiceForm readOnly={false} />
+        <Card className="max-w-xl p-5 sm:p-6">
+          <ServiceForm readOnly={false} />
+        </Card>
       ) : (
-        <p className="text-sm text-zinc-600">
-          Only owners and admins can add services.
-        </p>
+        <EmptyState
+          title="You cannot add services"
+          description="Only owners and admins can change the catalog."
+          action={
+            <Link href="/admin/services" className={buttonClass({ variant: "secondary" })}>
+              Back to services
+            </Link>
+          }
+        />
       )}
     </main>
   );

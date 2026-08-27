@@ -1,6 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { FormError } from "@/components/admin/form-error";
+import { Button } from "@/components/ui/button";
 import { Field, fieldClass } from "@/components/ui/field";
 import type { AvailabilityWindow } from "@/server/scheduling/availability";
 import { timeInputValue, WEEKDAYS } from "@/server/scheduling/constants";
@@ -55,27 +57,27 @@ export function WeeklyHoursForm({
   );
 
   return (
-    <section className="mt-10 max-w-2xl">
-      <h2 className="text-lg font-semibold text-zinc-950">Weekly hours</h2>
-      <p className="mt-1 text-sm text-zinc-500">
-        Times are in {timezone}. Split around lunch as two intervals on the same
-        day. Overnight shifts are not supported.
+    <section className="mt-8 max-w-2xl rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card) sm:p-6">
+      <h2 className="text-base font-semibold text-foreground">Weekly hours</h2>
+      <p className="mt-1 text-sm text-muted">
+        Times are in {timezone.replace(/_/g, " ")}. Split around lunch as two
+        intervals on the same day. Overnight shifts are not supported.
       </p>
 
       {readOnly ? (
         rows.length === 0 ? (
-          <p className="mt-4 text-sm text-zinc-600">No weekly hours set.</p>
+          <p className="mt-4 text-sm text-muted">No weekly hours set.</p>
         ) : (
-          <ul className="mt-4 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
+          <ul className="mt-4 divide-y divide-border rounded-lg border border-border">
             {rows.map((row) => (
               <li
                 key={row.key}
-                className="flex justify-between px-4 py-3 text-sm"
+                className="flex justify-between gap-3 px-4 py-3 text-sm"
               >
-                <span className="text-zinc-900">
+                <span className="font-medium text-foreground">
                   {WEEKDAYS.find((day) => day.value === row.weekday)?.label}
                 </span>
-                <span className="text-zinc-600">
+                <span className="text-muted">
                   {row.start_time}–{row.end_time}
                 </span>
               </li>
@@ -86,7 +88,7 @@ export function WeeklyHoursForm({
         <form action={formAction} className="mt-4 flex flex-col gap-3">
           <input type="hidden" name="doctor_id" value={doctorId} />
           {rows.length === 0 ? (
-            <p className="text-sm text-zinc-600">
+            <p className="text-sm text-muted">
               No intervals yet. Add at least one working window.
             </p>
           ) : (
@@ -94,7 +96,7 @@ export function WeeklyHoursForm({
               {rows.map((row) => (
                 <div
                   key={row.key}
-                  className="grid gap-2 rounded-lg border border-zinc-200 bg-white p-3 sm:grid-cols-[1fr_1fr_1fr_auto]"
+                  className="grid gap-2 rounded-lg border border-border bg-background p-3 sm:grid-cols-[1fr_1fr_1fr_auto]"
                 >
                   <Field label="Day">
                     <select
@@ -153,47 +155,40 @@ export function WeeklyHoursForm({
                       className={fieldClass}
                     />
                   </Field>
-                  <button
+                  <Button
                     type="button"
+                    variant="secondary"
+                    className="self-end"
                     onClick={() =>
                       setRows((current) =>
                         current.filter((item) => item.key !== row.key),
                       )
                     }
-                    className="h-11 self-end rounded-md border border-zinc-300 px-3 text-sm text-zinc-700 hover:bg-zinc-50"
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
           )}
-          <div className="flex flex-wrap gap-2">
-            <button
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
               type="button"
+              variant="secondary"
               onClick={() =>
                 setRows((current) => [
                   ...current,
                   newRow(current.at(-1)?.weekday ?? 0),
                 ])
               }
-              className="h-11 rounded-md border border-zinc-300 px-3 text-sm text-zinc-800 hover:bg-zinc-50"
             >
               Add interval
-            </button>
-            <button
-              type="submit"
-              disabled={pending}
-              className="h-11 rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
-            >
+            </Button>
+            <Button type="submit" disabled={pending}>
               {pending ? "Saving…" : "Save weekly hours"}
-            </button>
+            </Button>
           </div>
-          {state.error ? (
-            <p className="text-sm text-red-700" role="alert">
-              {state.error}
-            </p>
-          ) : null}
+          <FormError message={state.error} />
         </form>
       )}
     </section>

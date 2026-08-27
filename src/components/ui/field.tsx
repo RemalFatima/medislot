@@ -8,6 +8,9 @@ export const fieldClass = cn(
   "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted",
 );
 
+export const checkboxClass =
+  "size-4 shrink-0 rounded border-border text-primary accent-primary focus-visible:ring-2 focus-visible:ring-(--ring) disabled:opacity-60";
+
 export const textareaClass = cn(
   "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground",
   "outline-none transition-colors placeholder:text-muted",
