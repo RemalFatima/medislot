@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { checkboxClass, Field, fieldClass, textareaClass } from "@/components/ui/field";
+import { checkboxClass, Field, fieldClass, textareaClass, ValidatedForm } from "@/components/ui/field";
 import type { OrganizationSettings } from "@/server/settings/organization";
 import type { CatalogFormState } from "../form-utils";
 import { updateOrganizationSettingsAction } from "./actions";
@@ -33,7 +33,7 @@ export function OrganizationSettingsForm({
   const [isActive, setIsActive] = useState(organization.is_active);
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <ValidatedForm action={formAction} className="flex flex-col gap-6">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
         <div className="flex flex-col gap-6">
           <Card className="p-5 sm:p-6">
@@ -56,6 +56,7 @@ export function OrganizationSettingsForm({
                 <Field label="Type">
                   <select
                     name="type"
+                    required
                     defaultValue={organization.type}
                     disabled={readOnly}
                     className={fieldClass}
@@ -168,6 +169,7 @@ export function OrganizationSettingsForm({
             <Field label="Clinic timezone">
               <select
                 name="timezone"
+                required
                 defaultValue={organization.timezone}
                 disabled={readOnly}
                 className={fieldClass}
@@ -254,6 +256,6 @@ export function OrganizationSettingsForm({
           {pending ? "Saving…" : "Save settings"}
         </Button>
       )}
-    </form>
+    </ValidatedForm>
   );
 }

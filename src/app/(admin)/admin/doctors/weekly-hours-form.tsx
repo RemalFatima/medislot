@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
-import { Field, fieldClass } from "@/components/ui/field";
+import { Field, fieldClass, ValidatedForm } from "@/components/ui/field";
 import type { AvailabilityWindow } from "@/server/scheduling/availability";
 import { timeInputValue, WEEKDAYS } from "@/server/scheduling/constants";
 import type { CatalogFormState } from "../form-utils";
@@ -101,7 +101,7 @@ export function WeeklyHoursForm({
           })}
         </div>
       ) : (
-        <form action={formAction} className="mt-5 flex flex-col gap-3">
+        <ValidatedForm action={formAction} className="mt-5 flex flex-col gap-3">
           <input type="hidden" name="doctor_id" value={doctorId} />
           {WEEKDAYS.map((day) => {
             const dayRows = rowsForDay(rows, day.value);
@@ -197,7 +197,7 @@ export function WeeklyHoursForm({
             </Button>
           </div>
           <FormError message={state.error} />
-        </form>
+        </ValidatedForm>
       )}
     </section>
   );

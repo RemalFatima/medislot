@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import type { Department } from "@/server/catalog/departments";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
-import { checkboxClass, Field, fieldClass, textareaClass } from "@/components/ui/field";
+import { checkboxClass, Field, fieldClass, textareaClass, ValidatedForm } from "@/components/ui/field";
 import type { CatalogFormState } from "../form-utils";
 import {
   createDepartmentAction,
@@ -24,7 +24,7 @@ export function DepartmentForm({
   const [state, formAction, pending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="flex max-w-xl flex-col gap-4">
+    <ValidatedForm action={formAction} className="flex max-w-xl flex-col gap-4">
       {department ? <input type="hidden" name="id" value={department.id} /> : null}
       <Field label="Name">
         <input
@@ -49,6 +49,7 @@ export function DepartmentForm({
           type="number"
           name="sort_order"
           min={0}
+          required
           defaultValue={department?.sort_order ?? 0}
           disabled={readOnly}
           className={fieldClass}
@@ -77,6 +78,6 @@ export function DepartmentForm({
           {pending ? "Saving…" : department ? "Save department" : "Create department"}
         </Button>
       )}
-    </form>
+    </ValidatedForm>
   );
 }

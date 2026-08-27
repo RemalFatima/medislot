@@ -8,6 +8,7 @@ import {
   createDepartment,
   updateDepartment,
 } from "@/server/catalog/departments";
+import { humanErrorMessage } from "@/lib/human-error";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -43,8 +44,7 @@ export async function createDepartmentAction(
     await createDepartment(readDepartmentInput(formData));
   } catch (error) {
     return {
-      error:
-        error instanceof Error ? error.message : "Could not create department.",
+      error: humanErrorMessage(error, "Could not create department."),
     };
   }
 
@@ -70,8 +70,7 @@ export async function updateDepartmentAction(
     await updateDepartment(id, readDepartmentInput(formData));
   } catch (error) {
     return {
-      error:
-        error instanceof Error ? error.message : "Could not update department.",
+      error: humanErrorMessage(error, "Could not update department."),
     };
   }
 

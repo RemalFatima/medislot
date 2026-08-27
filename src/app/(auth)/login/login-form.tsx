@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
-import { Field, fieldClass } from "@/components/ui/field";
+import { Field, fieldClass, ValidatedForm } from "@/components/ui/field";
 import { loginAction, type LoginState } from "./actions";
 
 const initialState: LoginState = {};
@@ -12,7 +12,7 @@ export function LoginForm() {
   const [state, formAction, pending] = useActionState(loginAction, initialState);
 
   return (
-    <form action={formAction} className="flex w-full flex-col gap-4">
+    <ValidatedForm action={formAction} className="flex w-full flex-col gap-4">
       <Field label="Email">
         <input
           type="email"
@@ -35,6 +35,6 @@ export function LoginForm() {
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Signing in…" : "Sign in"}
       </Button>
-    </form>
+    </ValidatedForm>
   );
 }

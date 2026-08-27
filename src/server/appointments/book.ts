@@ -5,7 +5,7 @@ import { onAppointmentCreated } from "@/server/notifications/onAppointmentCreate
 import { createClient } from "@/server/supabase/server";
 import { getOrganizationId } from "@/server/tenant/getOrganizationId";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
-import { SlotUnavailableError } from "./errors";
+import { SlotUnavailableError, DuplicateBookingError, normalizePhone } from "./errors";
 import { bookAppointmentSchema } from "./schemas";
 import { clampBookingDate, getAvailableSlots } from "./slots";
 
@@ -79,6 +79,27 @@ export async function bookAppointment(
   }
 
   const supabase = await createClient();
+  const { data: existingVisits, error: existingError } = await supabase
+    .from("appointments")
+    .select("patient_phone")
+    .eq("organization_id", organizationId)
+    .eq("doctor_id", parsed.doctor_id)
+    .eq("start_at", parsed.start_at)
+    .in("status", ["pending", "confirmed"]);
+
+  if (existingError) {
+    throw new Error(existingError.message);
+  }
+
+  const incomingPhone = normalizePhone(parsed.patient_phone);
+  if (
+    (existingVisits ?? []).some(
+      (row) => normalizePhone(row.patient_phone) === incomingPhone,
+    )
+  ) {
+    throw new DuplicateBookingError();
+  }
+
   const { data, error } = await supabase.rpc("book_appointment", {
     p_doctor_id: parsed.doctor_id,
     p_service_id: parsed.service_id,

@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
-import { Field, fieldClass } from "@/components/ui/field";
+import { Field, fieldClass, ValidatedForm } from "@/components/ui/field";
 import type { DoctorListItem } from "@/server/catalog/doctors";
 import { EXCEPTION_TYPES } from "@/server/scheduling/constants";
 import type { CatalogFormState } from "../form-utils";
@@ -26,7 +26,7 @@ export function ExceptionForm({ doctors }: { doctors: DoctorListItem[] }) {
   const [type, setType] = useState("holiday");
 
   return (
-    <form action={formAction} className="grid gap-4 sm:grid-cols-2">
+    <ValidatedForm action={formAction} className="grid gap-4 sm:grid-cols-2">
       <Field label="Applies to" hint="Clinic-wide affects every doctor.">
         <select name="doctor_id" defaultValue="" className={fieldClass}>
           <option value="">Entire clinic</option>
@@ -43,6 +43,7 @@ export function ExceptionForm({ doctors }: { doctors: DoctorListItem[] }) {
       <Field label="Type">
         <select
           name="type"
+          required
           value={type}
           onChange={(event) => setType(event.target.value)}
           className={fieldClass}
@@ -58,16 +59,28 @@ export function ExceptionForm({ doctors }: { doctors: DoctorListItem[] }) {
         <input name="reason" className={fieldClass} />
       </Field>
       <Field
-        label="Start time (optional)"
+        label={type === "special_hours" ? "Start time" : "Start time (optional)"}
         hint={type === "special_hours" ? "Required for special hours." : undefined}
+        required={type === "special_hours"}
       >
-        <input type="time" name="start_time" className={fieldClass} />
+        <input
+          type="time"
+          name="start_time"
+          required={type === "special_hours"}
+          className={fieldClass}
+        />
       </Field>
       <Field
-        label="End time (optional)"
+        label={type === "special_hours" ? "End time" : "End time (optional)"}
         hint={type === "special_hours" ? "Required for special hours." : undefined}
+        required={type === "special_hours"}
       >
-        <input type="time" name="end_time" className={fieldClass} />
+        <input
+          type="time"
+          name="end_time"
+          required={type === "special_hours"}
+          className={fieldClass}
+        />
       </Field>
       <p className="text-sm text-muted sm:col-span-2">{TYPE_HINTS[type]}</p>
       <div className="sm:col-span-2">
@@ -78,6 +91,6 @@ export function ExceptionForm({ doctors }: { doctors: DoctorListItem[] }) {
           {pending ? "Saving…" : "Add date"}
         </Button>
       </div>
-    </form>
+    </ValidatedForm>
   );
 }

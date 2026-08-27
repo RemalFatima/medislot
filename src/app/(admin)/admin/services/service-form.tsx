@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import type { Service } from "@/server/catalog/services";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
-import { checkboxClass, Field, fieldClass, textareaClass } from "@/components/ui/field";
+import { checkboxClass, Field, fieldClass, textareaClass, ValidatedForm } from "@/components/ui/field";
 import type { CatalogFormState } from "../form-utils";
 import { createServiceAction, updateServiceAction } from "./actions";
 
@@ -21,7 +21,7 @@ export function ServiceForm({
   const [state, formAction, pending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="flex max-w-xl flex-col gap-4">
+    <ValidatedForm action={formAction} className="flex max-w-xl flex-col gap-4">
       {service ? <input type="hidden" name="id" value={service.id} /> : null}
       <Field label="Name">
         <input
@@ -88,6 +88,6 @@ export function ServiceForm({
           {pending ? "Saving…" : service ? "Save service" : "Create service"}
         </Button>
       )}
-    </form>
+    </ValidatedForm>
   );
 }

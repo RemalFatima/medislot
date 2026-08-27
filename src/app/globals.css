@@ -76,6 +76,12 @@ body {
   outline-offset: 2px;
 }
 
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
 #main-content {
   scroll-margin-top: 6.5rem;
 }

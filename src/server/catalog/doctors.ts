@@ -6,6 +6,11 @@ import {
 } from "@/server/tenant/getOrganizationId";
 import { doctorInputSchema } from "./schemas";
 import { uniqueOrgSlug } from "./unique-slug";
+import {
+  assertUniqueDoctorIdentity,
+  throwIfUniqueViolation,
+} from "./assert-unique";
+import { DOCTOR_IDENTITY_CONFLICT } from "./uniqueness";
 
 export type DoctorListItem = {
   id: string;
@@ -331,6 +336,11 @@ async function replaceJoins(
 export async function createDoctor(input: unknown): Promise<DoctorDetail> {
   const parsed = doctorInputSchema.parse(input);
   const organizationId = await getOrganizationId();
+  await assertUniqueDoctorIdentity(organizationId, {
+    fullName: parsed.full_name,
+    profession: parsed.profession,
+    specialization: parsed.specialization,
+  });
   const slug = await uniqueOrgSlug("doctors", organizationId, parsed.full_name);
   const supabase = await createClient();
 
@@ -354,6 +364,7 @@ export async function createDoctor(input: unknown): Promise<DoctorDetail> {
     .single();
 
   if (error || !data) {
+    throwIfUniqueViolation(error, DOCTOR_IDENTITY_CONFLICT);
     throw new Error(error?.message ?? "Could not create doctor.");
   }
 
@@ -378,6 +389,15 @@ export async function updateDoctor(
 ): Promise<DoctorDetail> {
   const parsed = doctorInputSchema.parse(input);
   const organizationId = await getOrganizationId();
+  await assertUniqueDoctorIdentity(
+    organizationId,
+    {
+      fullName: parsed.full_name,
+      profession: parsed.profession,
+      specialization: parsed.specialization,
+    },
+    id,
+  );
   const slug = await uniqueOrgSlug(
     "doctors",
     organizationId,
@@ -407,6 +427,7 @@ export async function updateDoctor(
     .maybeSingle();
 
   if (error) {
+    throwIfUniqueViolation(error, DOCTOR_IDENTITY_CONFLICT);
     throw new Error(error.message);
   }
 

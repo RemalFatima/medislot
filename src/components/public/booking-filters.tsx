@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { fieldClass } from "@/components/ui/field";
+import { Field, fieldClass, ValidatedForm } from "@/components/ui/field";
 
 type ServiceOption = {
   id: string;
@@ -28,18 +28,16 @@ export function BookingFilters({
   const [pending, setPending] = useState(false);
 
   return (
-    <form
+    <ValidatedForm
       action={action}
       method="get"
       onSubmit={() => setPending(true)}
       className="grid gap-3 rounded-xl border border-border bg-accent/40 p-3 sm:grid-cols-[1fr_1fr_auto] sm:p-4"
     >
-      <label className="min-w-0">
-        <span className="mb-1.5 block text-sm font-medium text-foreground">
-          Service
-        </span>
+      <Field label="Service">
         <select
           name="service"
+          required
           defaultValue={selectedServiceId}
           className={fieldClass}
         >
@@ -49,20 +47,18 @@ export function BookingFilters({
             </option>
           ))}
         </select>
-      </label>
-      <label className="min-w-0">
-        <span className="mb-1.5 block text-sm font-medium text-foreground">
-          Date
-        </span>
+      </Field>
+      <Field label="Date">
         <input
           type="date"
           name="date"
+          required
           min={today}
           max={maxDate}
           defaultValue={date}
           className={fieldClass}
         />
-      </label>
+      </Field>
       <div className="flex items-end">
         <Button
           type="submit"
@@ -73,6 +69,6 @@ export function BookingFilters({
           {pending ? "Loading times…" : "Show times"}
         </Button>
       </div>
-    </form>
+    </ValidatedForm>
   );
 }

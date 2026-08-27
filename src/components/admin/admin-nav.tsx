@@ -83,7 +83,7 @@ export function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
                     className={cn(
                       "flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)",
                       active
-                        ? "bg-accent font-medium text-primary"
+                        ? "bg-accent font-medium text-primary ring-1 ring-primary/15"
                         : "text-foreground/80 hover:bg-surface-muted hover:text-foreground",
                     )}
                   >

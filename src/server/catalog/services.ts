@@ -3,6 +3,11 @@ import { hasSupabasePublicEnv } from "@/server/supabase/env";
 import { getOrganizationId, tryGetOrganizationId } from "@/server/tenant/getOrganizationId";
 import { serviceInputSchema } from "./schemas";
 import { uniqueOrgSlug } from "./unique-slug";
+import {
+  assertUniqueServiceName,
+  throwIfUniqueViolation,
+} from "./assert-unique";
+import { SERVICE_NAME_CONFLICT } from "./uniqueness";
 
 export type Service = {
   id: string;
@@ -65,6 +70,7 @@ export async function getServiceById(id: string): Promise<Service | null> {
 export async function createService(input: unknown): Promise<Service> {
   const parsed = serviceInputSchema.parse(input);
   const organizationId = await getOrganizationId();
+  await assertUniqueServiceName(organizationId, parsed.name);
   const slug = await uniqueOrgSlug("services", organizationId, parsed.name);
   const supabase = await createClient();
 
@@ -83,6 +89,7 @@ export async function createService(input: unknown): Promise<Service> {
     .single();
 
   if (error || !data) {
+    throwIfUniqueViolation(error, SERVICE_NAME_CONFLICT);
     throw new Error(error?.message ?? "Could not create service.");
   }
 
@@ -95,6 +102,7 @@ export async function updateService(
 ): Promise<Service> {
   const parsed = serviceInputSchema.parse(input);
   const organizationId = await getOrganizationId();
+  await assertUniqueServiceName(organizationId, parsed.name, id);
   const slug = await uniqueOrgSlug("services", organizationId, parsed.name, id);
   const supabase = await createClient();
 
@@ -114,6 +122,7 @@ export async function updateService(
     .maybeSingle();
 
   if (error) {
+    throwIfUniqueViolation(error, SERVICE_NAME_CONFLICT);
     throw new Error(error.message);
   }
 

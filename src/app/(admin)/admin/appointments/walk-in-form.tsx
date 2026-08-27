@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Field, fieldClass, textareaClass } from "@/components/ui/field";
+import { Field, fieldClass, RequiredGroup, textareaClass, ValidatedForm } from "@/components/ui/field";
 import { cn } from "@/lib/cn";
 import { formatAppointmentTime } from "@/server/appointments/format";
 import type { PublicSlot } from "@/server/appointments/slots";
@@ -41,18 +41,21 @@ export function WalkInForm({
   }
 
   return (
-    <form action={formAction} className="mt-8 flex flex-col gap-8 border-t border-border pt-8">
+    <ValidatedForm action={formAction} className="mt-8 flex flex-col gap-8 border-t border-border pt-8">
       <input type="hidden" name="doctor_id" value={doctorId} />
       <input type="hidden" name="service_id" value={serviceId} />
 
-      <fieldset>
-        <legend className="text-base font-semibold text-foreground">Choose a time</legend>
-        <p className="mt-1 mb-3 text-sm text-muted">
-          Available times in {timezone.replace(/_/g, " ")}.
-          {selectedStart
-            ? ` Selected ${formatAppointmentTime(selectedStart, timezone)}.`
-            : " Select one slot to continue."}
-        </p>
+      <RequiredGroup
+        legend="Choose a time"
+        hint={
+          <p className="mt-1 mb-3 text-sm text-muted">
+            Available times in {timezone.replace(/_/g, " ")}.
+            {selectedStart
+              ? ` Selected ${formatAppointmentTime(selectedStart, timezone)}.`
+              : " Select one slot to continue."}
+          </p>
+        }
+      >
         <div className="grid grid-cols-2 gap-2 min-[380px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
           {slots.map((slot) => {
             const selected = selectedStart === slot.startAt;
@@ -80,7 +83,7 @@ export function WalkInForm({
             );
           })}
         </div>
-      </fieldset>
+      </RequiredGroup>
 
       <div className="flex max-w-xl flex-col gap-4">
         <div>
@@ -114,6 +117,6 @@ export function WalkInForm({
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
         {pending ? "Saving…" : "Create walk-in"}
       </Button>
-    </form>
+    </ValidatedForm>
   );
 }

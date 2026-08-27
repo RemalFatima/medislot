@@ -30,7 +30,7 @@ function SidebarAccount({
   logoutAction: () => Promise<void>;
 }) {
   return (
-    <div className="mt-auto border-t border-border p-4">
+    <div className="mt-auto border-t border-border bg-linear-to-t from-accent/40 to-surface p-4">
       <p className="truncate text-sm font-medium">{staffEmail ?? "Staff"}</p>
       <p className="mt-0.5 text-xs capitalize text-muted">{staffRole}</p>
       <form action={logoutAction} className="mt-3">
@@ -164,7 +164,7 @@ export function AdminShell({
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-14 items-center justify-between gap-2 border-b border-border px-4">
+        <div className="flex h-14 items-center justify-between gap-2 border-b border-border bg-linear-to-b from-accent to-surface px-4">
           <SidebarBrand />
           <Button
             ref={closeButtonRef}
@@ -189,7 +189,7 @@ export function AdminShell({
         aria-label="Staff navigation"
         className="fixed inset-y-0 left-0 hidden w-72 flex-col overflow-y-auto border-r border-border bg-surface lg:flex"
       >
-        <div className="flex h-16 items-center border-b border-border px-4">
+        <div className="flex h-[4.5rem] items-center border-b border-border bg-linear-to-b from-accent to-surface px-4">
           <SidebarBrand />
         </div>
         <AdminNav />

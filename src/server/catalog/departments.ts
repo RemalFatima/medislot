@@ -3,6 +3,11 @@ import { hasSupabasePublicEnv } from "@/server/supabase/env";
 import { getOrganizationId, tryGetOrganizationId } from "@/server/tenant/getOrganizationId";
 import { departmentInputSchema } from "./schemas";
 import { uniqueOrgSlug } from "./unique-slug";
+import {
+  assertUniqueDepartmentName,
+  throwIfUniqueViolation,
+} from "./assert-unique";
+import { DEPARTMENT_NAME_CONFLICT } from "./uniqueness";
 
 export type Department = {
   id: string;
@@ -94,6 +99,7 @@ export async function getDepartmentBySlug(
 export async function createDepartment(input: unknown): Promise<Department> {
   const parsed = departmentInputSchema.parse(input);
   const organizationId = await getOrganizationId();
+  await assertUniqueDepartmentName(organizationId, parsed.name);
   const slug = await uniqueOrgSlug("departments", organizationId, parsed.name);
   const supabase = await createClient();
 
@@ -111,6 +117,7 @@ export async function createDepartment(input: unknown): Promise<Department> {
     .single();
 
   if (error || !data) {
+    throwIfUniqueViolation(error, DEPARTMENT_NAME_CONFLICT);
     throw new Error(error?.message ?? "Could not create department.");
   }
 
@@ -123,6 +130,7 @@ export async function updateDepartment(
 ): Promise<Department> {
   const parsed = departmentInputSchema.parse(input);
   const organizationId = await getOrganizationId();
+  await assertUniqueDepartmentName(organizationId, parsed.name, id);
   const slug = await uniqueOrgSlug(
     "departments",
     organizationId,
@@ -146,6 +154,7 @@ export async function updateDepartment(
     .maybeSingle();
 
   if (error) {
+    throwIfUniqueViolation(error, DEPARTMENT_NAME_CONFLICT);
     throw new Error(error.message);
   }
 

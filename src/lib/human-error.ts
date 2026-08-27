@@ -5,6 +5,15 @@ export function humanErrorMessage(
   error: unknown,
   fallback = "Something went wrong. Please try again.",
 ): string {
+  if (
+    error instanceof Error &&
+    (error.name === "CatalogConflictError" ||
+      error.name === "DuplicateBookingError" ||
+      error.name === "SlotUnavailableError")
+  ) {
+    return error.message;
+  }
+
   const raw =
     typeof error === "string"
       ? error

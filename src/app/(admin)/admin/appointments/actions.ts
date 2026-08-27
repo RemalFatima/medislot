@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { ZodError } from "zod";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { bookAppointment } from "@/server/appointments/book";
-import { SlotUnavailableError } from "@/server/appointments/errors";
+import { SlotUnavailableError, DuplicateBookingError } from "@/server/appointments/errors";
 import { updateAppointmentStatus } from "@/server/appointments/updateStatus";
+import { humanErrorMessage } from "@/lib/human-error";
 import type { CatalogFormState } from "../form-utils";
 import { readString } from "../form-utils";
 
@@ -55,14 +56,16 @@ export async function createWalkInAction(
     if (error instanceof SlotUnavailableError) {
       return { error: error.message };
     }
+    if (error instanceof DuplicateBookingError) {
+      return { error: error.message };
+    }
     if (error instanceof ZodError) {
       return {
         error: error.issues[0]?.message ?? "Check the walk-in details.",
       };
     }
     return {
-      error:
-        error instanceof Error ? error.message : "Could not create the visit.",
+      error: humanErrorMessage(error, "Could not create the visit."),
     };
   }
 

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { createService, updateService } from "@/server/catalog/services";
+import { humanErrorMessage } from "@/lib/human-error";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -41,7 +42,7 @@ export async function createServiceAction(
     await createService(readServiceInput(formData));
   } catch (error) {
     return {
-      error: error instanceof Error ? error.message : "Could not create service.",
+      error: humanErrorMessage(error, "Could not create service."),
     };
   }
 
@@ -67,7 +68,7 @@ export async function updateServiceAction(
     await updateService(id, readServiceInput(formData));
   } catch (error) {
     return {
-      error: error instanceof Error ? error.message : "Could not update service.",
+      error: humanErrorMessage(error, "Could not update service."),
     };
   }
 

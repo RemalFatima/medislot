@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { createDoctor, updateDoctor } from "@/server/catalog/doctors";
+import { humanErrorMessage } from "@/lib/human-error";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -49,7 +50,7 @@ export async function createDoctorAction(
     await createDoctor(readDoctorInput(formData));
   } catch (error) {
     return {
-      error: error instanceof Error ? error.message : "Could not create doctor.",
+      error: humanErrorMessage(error, "Could not create doctor."),
     };
   }
 
@@ -75,7 +76,7 @@ export async function updateDoctorAction(
     await updateDoctor(id, readDoctorInput(formData));
   } catch (error) {
     return {
-      error: error instanceof Error ? error.message : "Could not update doctor.",
+      error: humanErrorMessage(error, "Could not update doctor."),
     };
   }
 

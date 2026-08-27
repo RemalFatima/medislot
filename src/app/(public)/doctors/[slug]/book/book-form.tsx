@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Field, fieldClass } from "@/components/ui/field";
+import { Field, fieldClass, RequiredGroup, ValidatedForm } from "@/components/ui/field";
 import { cn } from "@/lib/cn";
 import type { PublicSlot } from "@/server/appointments/slots";
 import { bookAppointmentAction, type BookFormState } from "./actions";
@@ -48,20 +48,21 @@ export function BookForm({
   }
 
   return (
-    <form action={formAction} className="mt-8 flex flex-col gap-8 border-t border-border pt-8">
+    <ValidatedForm action={formAction} className="mt-8 flex flex-col gap-8 border-t border-border pt-8">
       <input type="hidden" name="doctor_id" value={doctorId} />
       <input type="hidden" name="service_id" value={serviceId} />
 
-      <fieldset>
-        <legend className="text-base font-semibold text-foreground">
-          Choose a time
-        </legend>
-        <p className="mt-1 mb-3 text-sm text-muted">
-          Available times in {timezone.replace(/_/g, " ")}.
-          {selectedStart
-            ? ` Selected ${formatTime(selectedStart, timezone)}.`
-            : " Select one slot to continue."}
-        </p>
+      <RequiredGroup
+        legend="Choose a time"
+        hint={
+          <p className="mt-1 mb-3 text-sm text-muted">
+            Available times in {timezone.replace(/_/g, " ")}.
+            {selectedStart
+              ? ` Selected ${formatTime(selectedStart, timezone)}.`
+              : " Select one slot to continue."}
+          </p>
+        }
+      >
         <div className="grid grid-cols-2 gap-2 min-[380px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
           {slots.map((slot) => {
             const label = formatTime(slot.startAt, timezone);
@@ -91,7 +92,7 @@ export function BookForm({
             );
           })}
         </div>
-      </fieldset>
+      </RequiredGroup>
 
       <div className="flex flex-col gap-4 rounded-xl border border-border bg-accent/40 p-4 sm:p-5">
         <div>
@@ -137,6 +138,6 @@ export function BookForm({
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Booking…" : "Confirm appointment"}
       </Button>
-    </form>
+    </ValidatedForm>
   );
 }

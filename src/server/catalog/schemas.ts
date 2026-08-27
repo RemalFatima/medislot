@@ -5,15 +5,27 @@ const optionalText = z
   .trim()
   .transform((value) => (value.length === 0 ? null : value));
 
+const catalogName = z
+  .string()
+  .trim()
+  .transform((value) => value.replace(/\s+/g, " "))
+  .pipe(z.string().min(1).max(120));
+
+const doctorName = z
+  .string()
+  .trim()
+  .transform((value) => value.replace(/\s+/g, " "))
+  .pipe(z.string().min(1).max(160));
+
 export const departmentInputSchema = z.object({
-  name: z.string().trim().min(1).max(120),
+  name: catalogName,
   description: optionalText.pipe(z.string().max(2000).nullable()),
   sort_order: z.coerce.number().int().min(0).max(9999),
   is_active: z.boolean(),
 });
 
 export const serviceInputSchema = z.object({
-  name: z.string().trim().min(1).max(120),
+  name: catalogName,
   description: optionalText.pipe(z.string().max(2000).nullable()),
   duration_minutes: z.coerce.number().int().min(1).max(480),
   price: z.preprocess((value) => {
@@ -26,8 +38,8 @@ export const serviceInputSchema = z.object({
 });
 
 export const doctorInputSchema = z.object({
-  full_name: z.string().trim().min(1).max(160),
-  profession: z.string().trim().min(1).max(120),
+  full_name: doctorName,
+  profession: catalogName,
   specialization: optionalText.pipe(z.string().max(160).nullable()),
   qualifications: optionalText.pipe(z.string().max(500).nullable()),
   bio: optionalText.pipe(z.string().max(4000).nullable()),
