@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Button } from "@/components/ui/button";
 import type { CatalogFormState } from "../form-utils";
 import { deleteExceptionAction } from "../scheduling-actions";
 
@@ -13,17 +14,24 @@ export function DeleteExceptionButton({ id }: { id: string }) {
   );
 
   return (
-    <form action={formAction}>
+    <form
+      action={formAction}
+      onSubmit={(event) => {
+        if (
+          !window.confirm(
+            "Remove this holiday or closure? Booking availability will update after it is removed.",
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
       <input type="hidden" name="id" value={id} />
-      <button
-        type="submit"
-        disabled={pending}
-        className="text-sm text-red-700 hover:underline disabled:opacity-60"
-      >
+      <Button type="submit" variant="danger" size="sm" disabled={pending}>
         {pending ? "Removing…" : "Remove"}
-      </button>
+      </Button>
       {state.error ? (
-        <p className="mt-1 text-xs text-red-700" role="alert">
+        <p className="mt-1 text-xs text-danger" role="alert">
           {state.error}
         </p>
       ) : null}

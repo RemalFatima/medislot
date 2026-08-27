@@ -3,6 +3,7 @@ import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { getOrganizationSettings } from "@/server/settings/organization";
 import { listTimeZones } from "@/server/settings/timezones";
+import { PageHeader } from "@/components/ui/page-header";
 import { OrganizationSettingsForm } from "./organization-form";
 
 export const dynamic = "force-dynamic";
@@ -21,13 +22,11 @@ export default async function AdminSettingsPage() {
   }
 
   return (
-    <main className="px-6 py-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
-        Clinic settings
-      </h1>
-      <p className="mt-1 text-sm text-zinc-500">
-        Public name, timezone, and branding. Slug stays {organization.slug}.
-      </p>
+    <main className="px-4 py-6 sm:px-6 lg:px-8">
+      <PageHeader
+        title="Clinic settings"
+        description="Name, branding, contact, timezone, and whether the public site is visible."
+      />
       <OrganizationSettingsForm
         organization={organization}
         timezones={zones}
