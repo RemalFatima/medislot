@@ -9,10 +9,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
 
   return (
     <div className="flex min-h-full min-w-0 flex-1 flex-col">
-      <SiteHeader
-        name={APP_NAME}
-        logoUrl={organization?.logo_url ?? null}
-      />
+      <SiteHeader name={APP_NAME} />
       <div id="main-content" tabIndex={-1} className="flex min-w-0 flex-1 flex-col">
         {children}
       </div>

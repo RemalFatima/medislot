@@ -4,33 +4,18 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { LogOut, Menu, X } from "lucide-react";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { Button } from "@/components/ui/button";
+import { APP_LOGO, APP_NAME } from "@/lib/brand";
 import { cn } from "@/lib/cn";
 
-function SidebarBrand({
-  organizationName,
-  logoUrl,
-}: {
-  organizationName: string;
-  logoUrl: string | null;
-}) {
+function SidebarBrand() {
   return (
     <div className="flex min-w-0 items-center gap-2.5">
-      {logoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={logoUrl}
-          alt=""
-          className="size-8 shrink-0 rounded-lg object-cover"
-        />
-      ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-semibold text-primary">
-          {organizationName.slice(0, 1).toUpperCase()}
-        </span>
-      )}
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold">{organizationName}</p>
-        <p className="truncate text-xs text-muted">Staff console</p>
-      </div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={APP_LOGO}
+        alt={APP_NAME}
+        className="h-12 w-auto max-w-[15rem] shrink-0 object-contain object-left"
+      />
     </div>
   );
 }
@@ -62,15 +47,11 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 export function AdminShell({
-  organizationName,
-  logoUrl,
   staffEmail,
   staffRole,
   logoutAction,
   children,
 }: {
-  organizationName: string;
-  logoUrl: string | null;
   staffEmail: string | null;
   staffRole: string;
   logoutAction: () => Promise<void>;
@@ -153,7 +134,12 @@ export function AdminShell({
           <Menu className="size-5" aria-hidden />
           <span className="sr-only">Open navigation</span>
         </Button>
-        <p className="min-w-0 truncate text-sm font-semibold">{organizationName}</p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={APP_LOGO}
+          alt={APP_NAME}
+          className="h-11 w-auto max-w-[14rem] shrink-0 object-contain object-left"
+        />
       </header>
 
       {open ? (
@@ -179,7 +165,7 @@ export function AdminShell({
         )}
       >
         <div className="flex h-14 items-center justify-between gap-2 border-b border-border px-4">
-          <SidebarBrand organizationName={organizationName} logoUrl={logoUrl} />
+          <SidebarBrand />
           <Button
             ref={closeButtonRef}
             variant="ghost"
@@ -204,7 +190,7 @@ export function AdminShell({
         className="fixed inset-y-0 left-0 hidden w-72 flex-col overflow-y-auto border-r border-border bg-surface lg:flex"
       >
         <div className="flex h-16 items-center border-b border-border px-4">
-          <SidebarBrand organizationName={organizationName} logoUrl={logoUrl} />
+          <SidebarBrand />
         </div>
         <AdminNav />
         <SidebarAccount

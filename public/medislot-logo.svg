@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">MEDISLOT logo, open slot concept</title>
+  <desc id="desc">A bold teal abstract mark shaped like an open appointment slot, with a soft pulse cutout and MEDISLOT wordmark.</desc>
+  <rect width="1200" height="420" rx="36" fill="#ffffff"/>
+  <g transform="translate(70 62)">
+    <path d="M158 0c-87 0-158 71-158 158s71 158 158 158c48 0 91-22 120-56l-46-39c-18 22-44 36-74 36-55 0-99-44-99-99s44-99 99-99c30 0 56 14 74 36l46-39C249 22 206 0 158 0Z" fill="#0f6e6b"/>
+    <path d="M158 58c-55 0-100 45-100 100s45 100 100 100c31 0 59-14 77-37l-42-34c-9 12-21 19-35 19-27 0-48-21-48-48s21-48 48-48c14 0 26 7 35 19l42-34c-18-23-46-37-77-37Z" fill="#ffffff"/>
+    <path d="M92 158h58l18-33 24 65 19-32h32" fill="none" stroke="#0f6e6b" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="158" cy="158" r="6" fill="#0f6e6b"/>
+  </g>
+  <g transform="translate(408 0)">
+    <text x="0" y="202" fill="#0f6e6b" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="800" letter-spacing="1">MEDISLOT</text>
+    <text x="4" y="267" fill="#587c79" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="600" letter-spacing="5">CARE, IN YOUR RHYTHM</text>
+    <circle cx="6" cy="310" r="6" fill="#0f6e6b"/>
+    <circle cx="30" cy="310" r="6" fill="#0f6e6b"/>
+    <circle cx="54" cy="310" r="6" fill="#0f6e6b"/>
+  </g>
+</svg>

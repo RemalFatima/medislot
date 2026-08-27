@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 50 1100 340" role="img" aria-labelledby="title">
+  <title id="title">MEDISLOT</title>
+  <g transform="translate(70 62)">
+    <path d="M158 0c-87 0-158 71-158 158s71 158 158 158c48 0 91-22 120-56l-46-39c-18 22-44 36-74 36-55 0-99-44-99-99s44-99 99-99c30 0 56 14 74 36l46-39C249 22 206 0 158 0Z" fill="#0f6e6b"/>
+    <path d="M158 58c-55 0-100 45-100 100s45 100 100 100c31 0 59-14 77-37l-42-34c-9 12-21 19-35 19-27 0-48-21-48-48s21-48 48-48c14 0 26 7 35 19l42-34c-18-23-46-37-77-37Z" fill="#ffffff"/>
+    <path d="M92 158h58l18-33 24 65 19-32h32" fill="none" stroke="#0f6e6b" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="158" cy="158" r="6" fill="#0f6e6b"/>
+  </g>
+  <text x="408" y="248" fill="#0f6e6b" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="800" letter-spacing="1">MEDISLOT</text>
+</svg>

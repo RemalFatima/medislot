@@ -56,61 +56,68 @@ export default async function BookingConfirmationPage({
   ];
 
   return (
-    <main className="flex-1 py-10 sm:py-12">
-      <Container className="max-w-xl">
-        <BookingSteps current={6} />
+    <main className="flex-1">
+      <section className="border-b border-border bg-accent">
+        <Container className="max-w-xl py-10 sm:py-12">
+          <BookingSteps current={6} className="mb-0" />
+        </Container>
+      </section>
 
-        <Card className="p-6 sm:p-8">
-          <div className="flex items-start gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-success-bg text-success">
-              <CircleCheck className="size-6" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-medium text-success">
-                  Appointment confirmed
-                </p>
-                <Badge tone="success">
-                  {APPOINTMENT_STATUS_LABELS[booking.status]}
-                </Badge>
-              </div>
-              <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-                You&apos;re booked
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Your visit is reserved. Save this page or copy the confirmation
-                code so you can find the appointment later.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 rounded-xl border border-border bg-surface-muted px-4 py-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <Container className="max-w-xl py-10 sm:py-12">
+        <Card className="overflow-hidden p-0">
+          <div className="h-1.5 bg-primary" />
+          <div className="p-6 sm:p-8">
+            <div className="flex items-start gap-3">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-success-bg text-success">
+                <CircleCheck className="size-6" aria-hidden />
+              </span>
               <div className="min-w-0">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted">
-                  Confirmation code
-                </p>
-                <p className="mt-1 break-all font-mono text-sm text-foreground">
-                  {booking.confirmation_token}
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-medium text-success">
+                    Appointment confirmed
+                  </p>
+                  <Badge tone="success">
+                    {APPOINTMENT_STATUS_LABELS[booking.status]}
+                  </Badge>
+                </div>
+                <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+                  You&apos;re booked
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  Your visit is reserved. Save this page or copy the confirmation
+                  code so you can find the appointment later.
                 </p>
               </div>
-              <CopyReference value={booking.confirmation_token} />
             </div>
-          </div>
 
-          <dl className="mt-6 divide-y divide-border rounded-xl border border-border">
-            {rows.map((row) => (
-              <div
-                key={row.label}
-                className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:justify-between"
-              >
-                <dt className="text-sm text-muted">{row.label}</dt>
-                <dd className="text-sm font-medium text-foreground sm:text-right">
-                  {row.value}
-                </dd>
+            <div className="mt-6 rounded-xl border border-border bg-accent/50 px-4 py-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted">
+                    Confirmation code
+                  </p>
+                  <p className="mt-1 break-all font-mono text-sm text-foreground">
+                    {booking.confirmation_token}
+                  </p>
+                </div>
+                <CopyReference value={booking.confirmation_token} />
               </div>
-            ))}
-          </dl>
+            </div>
+
+            <dl className="mt-6 divide-y divide-border rounded-xl border border-border">
+              {rows.map((row) => (
+                <div
+                  key={row.label}
+                  className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:justify-between"
+                >
+                  <dt className="text-sm text-muted">{row.label}</dt>
+                  <dd className="text-sm font-medium text-foreground sm:text-right">
+                    {row.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </Card>
 
         <div className="mt-6 rounded-xl border border-border bg-surface px-5 py-5">

@@ -71,7 +71,7 @@ export function BookForm({
               <label
                 key={slot.startAt}
                 className={cn(
-                  "flex min-h-11 cursor-pointer items-center justify-center rounded-lg border px-2 py-2 text-sm font-medium transition-colors",
+                  "flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-2 py-2 text-sm font-medium transition-colors",
                   selected
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent",
@@ -93,7 +93,7 @@ export function BookForm({
         </div>
       </fieldset>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-accent/40 p-4 sm:p-5">
         <div>
           <h2 className="text-base font-semibold text-foreground">Your details</h2>
           <p className="mt-1 text-sm text-muted">
@@ -134,7 +134,7 @@ export function BookForm({
 
       <FormError message={state.error} />
 
-      <Button type="submit" disabled={pending} className="w-full sm:w-auto">
+      <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Booking…" : "Confirm appointment"}
       </Button>
     </form>

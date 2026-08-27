@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Stethoscope } from "lucide-react";
 import { listDepartments } from "@/server/catalog/departments";
 import {
   listDoctorProfessions,
@@ -10,7 +11,6 @@ import { DoctorsFilters } from "@/components/public/doctors-filters";
 import { buttonClass } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -67,14 +67,33 @@ export default async function DoctorsPage({
   const visibleDoctors = query
     ? doctors.filter((doctor) => matchesQuery(doctor, query))
     : doctors;
+  const countLabel =
+    visibleDoctors.length === 1 ? "1 doctor" : `${visibleDoctors.length} doctors`;
 
   return (
-    <main className="flex-1 py-10 sm:py-12">
-      <Container>
-        <PageHeader
-          title="Doctors"
-          description="Search by name or filter by department, profession, and specialization."
-        />
+    <main className="flex-1">
+      <section className="border-b border-border bg-accent">
+        <Container className="py-10 sm:py-14">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Clinicians
+          </p>
+          <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+                Doctors
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Search by name or filter by department, profession, and specialization.
+              </p>
+            </div>
+            <Link href="/departments" className={buttonClass({ variant: "secondary" })}>
+              Browse departments
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      <Container className="py-10 sm:py-12">
         <DoctorsFilters
           departments={departments}
           professions={professions}
@@ -113,12 +132,11 @@ export default async function DoctorsPage({
           />
         ) : (
           <>
-            <p className="mt-6 text-sm text-muted">
-              {visibleDoctors.length === 1
-                ? "1 doctor"
-                : `${visibleDoctors.length} doctors`}
+            <p className="mt-8 mb-4 inline-flex items-center gap-2 text-sm text-muted">
+              <Stethoscope className="size-4 text-primary" aria-hidden />
+              {countLabel}
             </p>
-            <ul className="mt-3 grid gap-4 md:grid-cols-2">
+            <ul className="grid gap-4 md:grid-cols-2">
               {visibleDoctors.map((doctor) => (
                 <li key={doctor.id}>
                   <DoctorCard doctor={doctor} />

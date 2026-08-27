@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { buttonClass } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { APP_LOGO } from "@/lib/brand";
 import { cn } from "@/lib/cn";
 
 const links = [
@@ -23,10 +24,8 @@ function isActive(pathname: string, href: string) {
 
 export function SiteHeader({
   name,
-  logoUrl,
 }: {
   name: string;
-  logoUrl: string | null;
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -56,25 +55,18 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/90 shadow-[0_1px_0_rgb(18_32_43/0.04),0_8px_24px_rgb(18_32_43/0.04)] backdrop-blur-md">
       <div className="h-0.5 bg-primary" />
-      <Container className="flex h-[4.5rem] items-center justify-between gap-3">
+      <Container className="flex h-[5.25rem] items-center justify-between gap-3">
         <Link
           href="/"
           className="flex min-w-0 items-center gap-2.5 text-base font-semibold text-foreground"
           onClick={() => setOpen(false)}
         >
-          {logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={logoUrl}
-              alt=""
-              className="size-9 shrink-0 rounded-lg object-cover"
-            />
-          ) : (
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
-              {name.slice(0, 1).toUpperCase()}
-            </span>
-          )}
-          <span className="truncate">{name}</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={APP_LOGO}
+            alt={name}
+            className="h-14 w-auto max-w-[16rem] shrink-0 object-contain object-left sm:h-16 sm:max-w-[20rem]"
+          />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">

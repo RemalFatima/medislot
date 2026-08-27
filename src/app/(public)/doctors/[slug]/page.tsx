@@ -46,60 +46,66 @@ export default async function DoctorProfilePage({
   ].filter((item): item is { label: string; value: string } => item != null);
 
   return (
-    <main className="flex-1 py-10 sm:py-12">
-      <Container className="max-w-4xl">
-        <Breadcrumb
-          items={[
-            { href: "/doctors", label: "Doctors" },
-            { label: doctor.full_name },
-          ]}
-        />
-
-        <Card className="p-5 sm:p-6">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-            <div className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-accent text-2xl font-semibold text-primary">
-              {doctor.photo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={doctor.photo_url}
-                  alt=""
-                  className="size-full object-cover"
-                />
-              ) : (
-                doctorInitials(doctor.full_name)
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                {doctor.full_name}
-              </h1>
-              <p className="mt-1 text-muted">
-                {doctor.profession}
-                {doctor.specialization ? ` · ${doctor.specialization}` : ""}
-              </p>
-              {doctor.departments.length > 0 ? (
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {doctor.departments.map((department) => (
-                    <li key={department.id}>
-                      <Link href={`/departments/${department.slug}`}>
-                        <Badge tone="primary">{department.name}</Badge>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+    <main className="flex-1">
+      <section className="border-b border-border bg-accent">
+        <Container className="max-w-4xl py-10 sm:py-12">
+          <Breadcrumb
+            items={[
+              { href: "/doctors", label: "Doctors" },
+              { label: doctor.full_name },
+            ]}
+          />
+          <Card className="overflow-hidden p-0">
+            <div className="h-1.5 bg-primary" />
+            <div className="bg-linear-to-b from-accent/40 to-surface p-5 sm:p-6">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+              <div className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-accent text-2xl font-semibold text-primary ring-1 ring-primary/10">
+                {doctor.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={doctor.photo_url}
+                    alt=""
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  doctorInitials(doctor.full_name)
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                  {doctor.full_name}
+                </h1>
+                <p className="mt-1 text-muted">
+                  {doctor.profession}
+                  {doctor.specialization ? ` · ${doctor.specialization}` : ""}
+                </p>
+                {doctor.departments.length > 0 ? (
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {doctor.departments.map((department) => (
+                      <li key={department.id}>
+                        <Link href={`/departments/${department.slug}`}>
+                          <Badge tone="primary">{department.name}</Badge>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+              {canBook ? (
+                <Link
+                  href={bookHref}
+                  className={buttonClass({ className: "w-full shrink-0 sm:w-auto" })}
+                >
+                  Book appointment
+                </Link>
               ) : null}
             </div>
-            {canBook ? (
-              <Link
-                href={bookHref}
-                className={buttonClass({ className: "w-full shrink-0 sm:w-auto" })}
-              >
-                Book appointment
-              </Link>
-            ) : null}
           </div>
         </Card>
+        </Container>
+      </section>
 
+      <Container className="max-w-4xl py-10 sm:py-12">
         {doctor.bio ? (
           <section className="mt-6">
             <Card className="p-5 sm:p-6">

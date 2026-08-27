@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Stethoscope } from "lucide-react";
 import { getDepartmentBySlug } from "@/server/catalog/departments";
 import { listDoctors } from "@/server/catalog/doctors";
 import { DoctorCard } from "@/components/public/doctor-card";
@@ -7,7 +8,6 @@ import { buttonClass } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -27,34 +27,48 @@ export default async function DepartmentDetailPage({
     activeOnly: true,
     departmentSlug: department.slug,
   });
+  const countLabel = doctors.length === 1 ? "1 doctor" : `${doctors.length} doctors`;
 
   return (
-    <main className="flex-1 py-10 sm:py-12">
-      <Container>
-        <Breadcrumb
-          items={[
-            { href: "/departments", label: "Departments" },
-            { label: department.name },
-          ]}
-        />
-        <PageHeader
-          title={department.name}
-          description={
-            department.description ??
-            "Doctors who practice in this department are listed below."
-          }
-          actions={
-            <Link href="/doctors" className={buttonClass({ variant: "secondary", size: "sm" })}>
+    <main className="flex-1">
+      <section className="border-b border-border bg-accent">
+        <Container className="py-10 sm:py-12">
+          <Breadcrumb
+            items={[
+              { href: "/departments", label: "Departments" },
+              { label: department.name },
+            ]}
+          />
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex min-w-0 gap-4">
+              <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-surface text-lg font-semibold text-primary shadow-[var(--shadow-card)] ring-1 ring-primary/10">
+                {department.name.slice(0, 1).toUpperCase()}
+              </span>
+              <div className="min-w-0">
+                <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+                  {department.name}
+                </h1>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+                  {department.description ??
+                    "Doctors who practice in this department are listed below."}
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/doctors"
+              className={buttonClass({ variant: "secondary", className: "shrink-0" })}
+            >
               All doctors
             </Link>
-          }
-        />
-        <h2 className="mb-4 text-lg font-semibold text-foreground">
-          Doctors
-          <span className="ml-2 text-sm font-normal text-muted">
-            {doctors.length === 1 ? "1 doctor" : `${doctors.length} doctors`}
-          </span>
-        </h2>
+          </div>
+        </Container>
+      </section>
+
+      <Container className="py-10 sm:py-12">
+        <p className="mb-4 inline-flex items-center gap-2 text-sm text-muted">
+          <Stethoscope className="size-4 text-primary" aria-hidden />
+          {countLabel}
+        </p>
         {doctors.length === 0 ? (
           <EmptyState
             title="No doctors in this department yet"

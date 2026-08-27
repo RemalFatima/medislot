@@ -109,7 +109,7 @@ export default async function Home() {
           <div className="rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
             <p className="text-sm font-semibold text-foreground">How booking works</p>
             <ol className="mt-4 space-y-3">
-              {bookingSteps.map((step, index) => {
+              {bookingSteps.map((step) => {
                 const Icon = step.icon;
                 return (
                   <li
@@ -120,12 +120,7 @@ export default async function Home() {
                       <Icon className="size-4" aria-hidden />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        <span className="mr-1.5 text-xs font-semibold tabular-nums text-primary">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        {step.title}
-                      </p>
+                      <p className="text-sm font-semibold text-foreground">{step.title}</p>
                       <p className="mt-0.5 text-sm text-muted">{step.text}</p>
                     </div>
                   </li>

@@ -27,12 +27,15 @@ export function DoctorsFilters({
   );
 
   return (
-    <Card className="p-4 sm:p-5">
-      <form
-        action="/doctors"
-        method="get"
-        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-12"
-      >
+    <Card className="overflow-hidden p-0">
+      <div className="h-1.5 bg-primary" />
+      <div className="bg-linear-to-b from-accent/30 to-surface p-4 sm:p-5">
+        <p className="mb-4 text-sm font-semibold text-foreground">Find a doctor</p>
+        <form
+          action="/doctors"
+          method="get"
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-12"
+        >
         <label className="min-w-0 sm:col-span-2 lg:col-span-12">
           <span className="mb-1.5 block text-sm font-medium text-foreground">
             Search
@@ -109,6 +112,7 @@ export function DoctorsFilters({
           </Link>
         </p>
       ) : null}
+      </div>
     </Card>
   );
 }

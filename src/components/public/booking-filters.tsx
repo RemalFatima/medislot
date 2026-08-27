@@ -32,7 +32,7 @@ export function BookingFilters({
       action={action}
       method="get"
       onSubmit={() => setPending(true)}
-      className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
+      className="grid gap-3 rounded-xl border border-border bg-accent/40 p-3 sm:grid-cols-[1fr_1fr_auto] sm:p-4"
     >
       <label className="min-w-0">
         <span className="mb-1.5 block text-sm font-medium text-foreground">

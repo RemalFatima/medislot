@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SkipLink } from "@/components/ui/skip-link";
-import { APP_NAME } from "@/lib/brand";
+import { APP_FAVICON, APP_NAME } from "@/lib/brand";
 import { getPublicOrganization } from "@/server/tenant/getPublicOrganization";
 import "./globals.css";
 
@@ -23,9 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
       organization?.branding.tagline ??
       organization?.branding.description ??
       "Hospital and clinic doctor appointment platform",
-    icons: organization?.logo_url
-      ? { icon: organization.logo_url }
-      : undefined,
+    icons: {
+      icon: [{ url: APP_FAVICON, type: "image/svg+xml" }],
+      shortcut: APP_FAVICON,
+      apple: APP_FAVICON,
+    },
   };
 }
 
