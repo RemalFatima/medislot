@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { allowedStatusTransitions } from "@/domain/appointments/status";
+import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { APPOINTMENT_STATUS_LABELS } from "@/server/appointments/labels";
 import type { AppointmentStatus } from "@/types/database";
@@ -11,7 +12,7 @@ import { updateAppointmentStatusAction } from "./actions";
 const initialState: CatalogFormState = {};
 
 const selectClass =
-  "h-9 w-full min-w-0 rounded-lg border border-border bg-surface px-2 text-sm text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-(--ring) sm:w-40";
+  "h-11 w-full min-w-0 rounded-lg border border-border bg-surface px-2 text-sm text-foreground outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-(--ring) sm:h-9 sm:w-40";
 
 export function StatusForm({
   id,
@@ -41,15 +42,11 @@ export function StatusForm({
             </option>
           ))}
         </select>
-        <Button type="submit" variant="secondary" size="sm" disabled={pending}>
+        <Button type="submit" variant="secondary" size="sm" disabled={pending} className="h-11 sm:h-9">
           {pending ? "Saving…" : "Update"}
         </Button>
       </div>
-      {state.error ? (
-        <p className="text-xs text-danger" role="alert">
-          {state.error}
-        </p>
-      ) : null}
+      <FormError message={state.error} />
     </form>
   );
 }

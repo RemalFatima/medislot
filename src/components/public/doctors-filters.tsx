@@ -33,7 +33,7 @@ export function DoctorsFilters({
         method="get"
         className="grid gap-3 sm:grid-cols-2 lg:grid-cols-12"
       >
-        <label className="sm:col-span-2 lg:col-span-12">
+        <label className="min-w-0 sm:col-span-2 lg:col-span-12">
           <span className="mb-1.5 block text-sm font-medium text-foreground">
             Search
           </span>
@@ -45,7 +45,7 @@ export function DoctorsFilters({
             className={fieldClass}
           />
         </label>
-        <label className="lg:col-span-3">
+        <label className="min-w-0 lg:col-span-3">
           <span className="mb-1.5 block text-sm font-medium text-foreground">
             Department
           </span>
@@ -62,7 +62,7 @@ export function DoctorsFilters({
             ))}
           </select>
         </label>
-        <label className="lg:col-span-3">
+        <label className="min-w-0 lg:col-span-3">
           <span className="mb-1.5 block text-sm font-medium text-foreground">
             Profession
           </span>
@@ -79,7 +79,7 @@ export function DoctorsFilters({
             ))}
           </select>
         </label>
-        <label className="lg:col-span-3">
+        <label className="min-w-0 lg:col-span-3">
           <span className="mb-1.5 block text-sm font-medium text-foreground">
             Specialization
           </span>

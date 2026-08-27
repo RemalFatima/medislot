@@ -28,7 +28,7 @@ export function buttonClass({
   className?: string;
 } = {}) {
   return cn(
-        "inline-flex max-w-full items-center justify-center gap-2 rounded-lg font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+    "inline-flex max-w-full items-center justify-center gap-2 rounded-lg font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
     variants[variant],
     sizes[size],
     className,

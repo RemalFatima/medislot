@@ -1,5 +1,5 @@
 import { PageSkeleton } from "@/components/ui/page-skeleton";
 
 export default function AdminLoading() {
-  return <PageSkeleton compact />;
+  return <PageSkeleton compact className="px-4 sm:px-6 lg:px-8" />;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Field, fieldClass, textareaClass } from "@/components/ui/field";
@@ -52,7 +53,7 @@ export function WalkInForm({
             ? ` Selected ${formatAppointmentTime(selectedStart, timezone)}.`
             : " Select one slot to continue."}
         </p>
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 min-[380px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
           {slots.map((slot) => {
             const selected = selectedStart === slot.startAt;
             return (
@@ -108,14 +109,7 @@ export function WalkInForm({
         </Field>
       </div>
 
-      {state.error ? (
-        <p
-          className="rounded-lg border border-danger/20 bg-danger-bg px-3 py-2 text-sm text-danger"
-          role="alert"
-        >
-          {state.error}
-        </p>
-      ) : null}
+      <FormError message={state.error} />
 
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
         {pending ? "Saving…" : "Create walk-in"}

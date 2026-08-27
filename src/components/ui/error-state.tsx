@@ -41,3 +41,9 @@ export function RetryButton({
     </Button>
   );
 }
+
+export function retryHandler(retry?: () => void, reset?: () => void) {
+  return () => {
+    (retry ?? reset)?.();
+  };
+}

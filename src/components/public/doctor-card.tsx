@@ -60,7 +60,6 @@ export function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
           href={`/doctors/${doctor.slug}`}
           className={buttonClass({
             variant: "secondary",
-            size: "sm",
             className: "w-full sm:flex-1",
           })}
         >
@@ -68,7 +67,7 @@ export function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
         </Link>
         <Link
           href={`/doctors/${doctor.slug}/book`}
-          className={buttonClass({ size: "sm", className: "w-full sm:flex-1" })}
+          className={buttonClass({ className: "w-full sm:flex-1" })}
         >
           Book appointment
         </Link>

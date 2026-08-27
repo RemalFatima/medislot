@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ErrorState, RetryButton } from "@/components/ui/error-state";
+import { ErrorState, RetryButton, retryHandler } from "@/components/ui/error-state";
 import { buttonClass } from "@/components/ui/button";
 import { humanErrorMessage } from "@/lib/human-error";
 
 export default function RootError({
   error,
+  retry,
   reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry?: () => void;
+  reset?: () => void;
 }) {
   return (
     <main className="flex flex-1 items-center justify-center">
@@ -19,7 +21,7 @@ export default function RootError({
         description={humanErrorMessage(error)}
         action={
           <>
-            <RetryButton onClick={reset} />
+            <RetryButton onClick={retryHandler(retry, reset)} />
             <Link href="/" className={buttonClass({ variant: "secondary", className: "w-full sm:w-auto" })}>
               Back to home
             </Link>

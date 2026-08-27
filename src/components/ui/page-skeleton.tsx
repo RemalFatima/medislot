@@ -1,13 +1,16 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/cn";
 
 export function PageSkeleton({
   compact = false,
+  className,
 }: {
   compact?: boolean;
+  className?: string;
 }) {
   return (
     <div
-      className={compact ? "px-4 py-6 sm:px-6 lg:px-8" : "px-4 py-10 sm:px-6 lg:px-8"}
+      className={cn(compact ? "py-6" : "py-10", className)}
       aria-busy="true"
       aria-live="polite"
     >

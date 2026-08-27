@@ -100,12 +100,12 @@ export function AdminShell({
   const close = () => setOpen(false);
 
   return (
-    <div className="min-h-full bg-background">
+    <div className="min-h-full min-w-0 bg-background">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-surface px-4 lg:hidden">
         <Button
           variant="ghost"
           size="sm"
-          className="h-10 w-10 shrink-0 px-0"
+          className="h-11 w-11 shrink-0 px-0"
           aria-expanded={open}
           aria-controls={drawerId}
           onClick={() => setOpen(true)}
@@ -139,7 +139,7 @@ export function AdminShell({
           <Button
             variant="ghost"
             size="sm"
-            className="h-10 w-10 shrink-0 px-0"
+            className="h-11 w-11 shrink-0 px-0"
             onClick={close}
           >
             <X className="size-5" aria-hidden />
@@ -169,7 +169,7 @@ export function AdminShell({
         />
       </aside>
 
-      <div className="lg:pl-72">{children}</div>
+      <div className="min-w-0 lg:pl-72">{children}</div>
     </div>
   );
 }

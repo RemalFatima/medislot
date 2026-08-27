@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import type { CatalogFormState } from "../form-utils";
 import { deleteExceptionAction } from "../scheduling-actions";
@@ -30,11 +31,7 @@ export function DeleteExceptionButton({ id }: { id: string }) {
       <Button type="submit" variant="danger" size="sm" disabled={pending}>
         {pending ? "Removing…" : "Remove"}
       </Button>
-      {state.error ? (
-        <p className="mt-1 text-xs text-danger" role="alert">
-          {state.error}
-        </p>
-      ) : null}
+      <FormError message={state.error} className="mt-1" />
     </form>
   );
 }

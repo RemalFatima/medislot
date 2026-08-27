@@ -7,12 +7,12 @@ export default async function PublicLayout({ children }: { children: ReactNode }
   const organization = await getPublicOrganization();
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className="flex min-h-full min-w-0 flex-1 flex-col">
       <SiteHeader
         name={organization?.name ?? "MediSlot"}
         logoUrl={organization?.logo_url ?? null}
       />
-      <div className="flex flex-1 flex-col">{children}</div>
+      <div className="flex min-w-0 flex-1 flex-col">{children}</div>
       <SiteFooter organization={organization} />
     </div>
   );

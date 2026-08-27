@@ -96,7 +96,7 @@ export function SiteHeader({
 
         <button
           type="button"
-          className="inline-flex size-10 items-center justify-center rounded-lg text-foreground hover:bg-surface-muted md:hidden"
+          className="inline-flex size-11 items-center justify-center rounded-lg text-foreground hover:bg-surface-muted md:hidden"
           aria-expanded={open}
           aria-controls={menuId}
           onClick={() => setOpen((value) => !value)}
@@ -119,7 +119,7 @@ export function SiteHeader({
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "rounded-lg px-3 py-2.5 text-sm",
+                      "flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm",
                       active
                         ? "bg-accent font-medium text-primary"
                         : "text-foreground hover:bg-surface-muted",

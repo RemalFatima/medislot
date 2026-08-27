@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { humanErrorMessage } from "@/lib/human-error";
 
 export const fieldClass = cn(
   "h-11 w-full min-w-0 max-w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground",
@@ -38,7 +39,7 @@ export function Field({
       {hint && !error ? <span className="text-xs text-muted">{hint}</span> : null}
       {error ? (
         <span className="text-xs text-danger" role="alert">
-          {error}
+          {humanErrorMessage(error)}
         </span>
       ) : null}
     </label>

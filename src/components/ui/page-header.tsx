@@ -24,7 +24,7 @@ export function PageHeader({
           {title}
         </h1>
         {description ? (
-          <p className="mt-1 max-w-2xl text-sm text-muted">{description}</p>
+          <p className="mt-1 max-w-2xl break-words text-sm text-muted">{description}</p>
         ) : null}
       </div>
       {actions ? (
