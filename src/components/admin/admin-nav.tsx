@@ -2,42 +2,100 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  Building2,
+  CalendarDays,
+  CalendarOff,
+  LayoutDashboard,
+  Settings,
+  Stethoscope,
+  ClipboardList,
+} from "lucide-react";
+import { cn } from "@/lib/cn";
 
-const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/departments", label: "Departments" },
-  { href: "/admin/doctors", label: "Doctors" },
-  { href: "/admin/services", label: "Services" },
-  { href: "/admin/holidays", label: "Holidays" },
-  { href: "/admin/appointments", label: "Appointments" },
-  { href: "/admin/settings", label: "Settings" },
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+};
+
+type NavGroup = {
+  label: string;
+  items: NavItem[];
+};
+
+const groups: NavGroup[] = [
+  {
+    label: "Overview",
+    items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard }],
+  },
+  {
+    label: "Care",
+    items: [
+      { href: "/admin/appointments", label: "Appointments", icon: CalendarDays },
+    ],
+  },
+  {
+    label: "Catalog",
+    items: [
+      { href: "/admin/doctors", label: "Doctors", icon: Stethoscope },
+      { href: "/admin/departments", label: "Departments", icon: Building2 },
+      { href: "/admin/services", label: "Services", icon: ClipboardList },
+    ],
+  },
+  {
+    label: "Clinic",
+    items: [
+      { href: "/admin/holidays", label: "Holidays", icon: CalendarOff },
+      { href: "/admin/settings", label: "Settings", icon: Settings },
+    ],
+  },
 ];
 
-export function AdminNav() {
+function isActive(pathname: string, href: string) {
+  if (href === "/admin") {
+    return pathname === "/admin";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-wrap gap-1 border-b border-zinc-200 bg-white px-6">
-      {links.map((link) => {
-        const active =
-          link.href === "/admin"
-            ? pathname === "/admin"
-            : pathname === link.href || pathname.startsWith(`${link.href}/`);
+    <nav aria-label="Admin" className="flex flex-1 flex-col gap-6 px-3 py-4">
+      {groups.map((group) => (
+        <div key={group.label}>
+          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
+            {group.label}
+          </p>
+          <ul className="mt-1.5 space-y-0.5">
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(pathname, item.href);
 
-        return (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`border-b-2 px-3 py-2 text-sm ${
-              active
-                ? "border-zinc-900 font-medium text-zinc-950"
-                : "border-transparent text-zinc-600 hover:text-zinc-950"
-            }`}
-          >
-            {link.label}
-          </Link>
-        );
-      })}
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={onNavigate}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
+                      active
+                        ? "bg-accent font-medium text-primary"
+                        : "text-foreground/80 hover:bg-surface-muted hover:text-foreground",
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0" aria-hidden />
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
     </nav>
   );
 }

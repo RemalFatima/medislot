@@ -1,22 +1,43 @@
 import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
 
-export const fieldClass =
-  "h-11 rounded-md border border-zinc-300 bg-white px-3 text-zinc-900 outline-none focus:border-zinc-900";
+export const fieldClass = cn(
+  "h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground",
+  "outline-none transition-colors placeholder:text-muted",
+  "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+  "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted",
+);
 
-export const textareaClass =
-  "rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none focus:border-zinc-900";
+export const textareaClass = cn(
+  "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground",
+  "outline-none transition-colors placeholder:text-muted",
+  "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+  "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted",
+);
 
 export function Field({
   label,
+  htmlFor,
+  hint,
+  error,
   children,
 }: {
   label: string;
+  htmlFor?: string;
+  hint?: string;
+  error?: string;
   children: ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-1.5 text-sm">
-      <span className="font-medium text-zinc-800">{label}</span>
+    <label htmlFor={htmlFor} className="flex flex-col gap-1.5 text-sm">
+      <span className="font-medium text-foreground">{label}</span>
       {children}
+      {hint && !error ? <span className="text-xs text-muted">{hint}</span> : null}
+      {error ? (
+        <span className="text-xs text-danger" role="alert">
+          {error}
+        </span>
+      ) : null}
     </label>
   );
 }
