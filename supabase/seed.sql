@@ -13,11 +13,12 @@ insert into public.organizations (
 )
 values (
   'a0000000-0000-4000-8000-000000000001',
-  'Demo Clinic',
+  'MEDISLOT',
   'demo-clinic',
   'clinic',
   'Asia/Karachi',
   'en',
   true
 )
-on conflict (id) do nothing;
+on conflict (id) do update
+set name = excluded.name;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SkipLink } from "@/components/ui/skip-link";
+import { APP_NAME } from "@/lib/brand";
 import { getPublicOrganization } from "@/server/tenant/getPublicOrganization";
 import "./globals.css";
 
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const organization = await getPublicOrganization();
   return {
-    title: organization?.name ?? "MediSlot",
+    title: APP_NAME,
     description:
       organization?.branding.tagline ??
       organization?.branding.description ??

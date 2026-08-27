@@ -54,11 +54,12 @@ export function SiteHeader({
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface">
-      <Container className="flex h-16 items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/90 shadow-[0_1px_0_rgb(18_32_43/0.04),0_8px_24px_rgb(18_32_43/0.04)] backdrop-blur-md">
+      <div className="h-0.5 bg-primary" />
+      <Container className="flex h-[4.5rem] items-center justify-between gap-3">
         <Link
           href="/"
-          className="flex min-w-0 items-center gap-2.5 text-sm font-semibold text-foreground"
+          className="flex min-w-0 items-center gap-2.5 text-base font-semibold text-foreground"
           onClick={() => setOpen(false)}
         >
           {logoUrl ? (
@@ -66,10 +67,10 @@ export function SiteHeader({
             <img
               src={logoUrl}
               alt=""
-              className="size-8 shrink-0 rounded-lg object-cover"
+              className="size-9 shrink-0 rounded-lg object-cover"
             />
           ) : (
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-semibold text-primary">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
               {name.slice(0, 1).toUpperCase()}
             </span>
           )}
@@ -85,17 +86,23 @@ export function SiteHeader({
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)",
+                  "rounded-lg px-3.5 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)",
                   active
-                    ? "bg-accent font-medium text-primary"
-                    : "text-muted hover:bg-surface-muted hover:text-foreground",
+                    ? "font-medium text-primary underline decoration-primary decoration-2 underline-offset-8"
+                    : "text-muted hover:text-foreground",
                 )}
               >
                 {link.label}
               </Link>
             );
           })}
-          <Link href="/login" className={buttonClass({ size: "sm", className: "ml-2" })}>
+          <Link
+            href="/login"
+            className={buttonClass({
+              size: "sm",
+              className: "ml-2",
+            })}
+          >
             Staff sign in
           </Link>
         </nav>
@@ -139,7 +146,9 @@ export function SiteHeader({
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
-                className={buttonClass({ className: "mt-2 w-full" })}
+                className={buttonClass({
+                  className: "mt-2 w-full",
+                })}
               >
                 Staff sign in
               </Link>

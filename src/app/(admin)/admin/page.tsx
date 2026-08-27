@@ -5,12 +5,12 @@ import { requireStaff } from "@/server/auth/requireStaff";
 import { listDepartments } from "@/server/catalog/departments";
 import { listDoctors } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
-import { getOrganizationSettings } from "@/server/settings/organization";
 import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { cn } from "@/lib/cn";
+import { APP_NAME } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -27,14 +27,12 @@ function formatIsoDate(date: string): string {
 
 export default async function AdminPage() {
   await requireStaff();
-  const [organization, departments, doctors, services, summary] =
-    await Promise.all([
-      getOrganizationSettings(),
-      listDepartments(),
-      listDoctors(),
-      listServices(),
-      getDashboardSummary(),
-    ]);
+  const [departments, doctors, services, summary] = await Promise.all([
+    listDepartments(),
+    listDoctors(),
+    listServices(),
+    getDashboardSummary(),
+  ]);
 
   const statusMax = Math.max(summary.todayTotal, 1);
   const doctorMax = Math.max(...summary.weekByDoctor.map((row) => row.count), 1);
@@ -43,7 +41,7 @@ export default async function AdminPage() {
     <main className="px-4 py-6 sm:px-6 lg:px-8">
       <PageHeader
         title="Dashboard"
-        description={`${organization?.name ?? "Clinic"} · times in ${summary.timezone.replace(/_/g, " ")}`}
+        description={`${APP_NAME} · times in ${summary.timezone.replace(/_/g, " ")}`}
         actions={
           <Link href="/admin/appointments" className={buttonClass()}>
             Today&apos;s appointments

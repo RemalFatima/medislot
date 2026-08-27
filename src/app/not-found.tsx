@@ -4,6 +4,7 @@ import { buttonClass } from "@/components/ui/button";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 import { getPublicOrganization } from "@/server/tenant/getPublicOrganization";
+import { APP_NAME } from "@/lib/brand";
 
 export default async function NotFound() {
   const organization = await getPublicOrganization();
@@ -11,7 +12,7 @@ export default async function NotFound() {
   return (
     <div className="flex min-h-full min-w-0 flex-1 flex-col">
       <SiteHeader
-        name={organization?.name ?? "MediSlot"}
+        name={APP_NAME}
         logoUrl={organization?.logo_url ?? null}
       />
       <main
