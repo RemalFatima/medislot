@@ -14,7 +14,7 @@ export function doctorInitials(name: string): string {
 
 export function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[var(--shadow-card)]">
+    <Card className="flex h-full flex-col overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
       <div className="h-1.5 bg-primary" />
       <div className="flex flex-1 flex-col bg-linear-to-b from-accent/30 to-surface p-5">
         <div className="flex gap-4">

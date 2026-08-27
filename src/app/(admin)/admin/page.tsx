@@ -73,7 +73,7 @@ export default async function AdminPage() {
             <div className="bg-linear-to-b from-accent/50 to-surface p-5">
               <div className="flex items-start justify-between gap-3">
                 <p className="text-sm font-medium text-muted">Today</p>
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-[var(--shadow-card)] ring-1 ring-primary/10">
+                <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-(--shadow-card) ring-1 ring-primary/10">
                   <CalendarDays className="size-5" aria-hidden />
                 </span>
               </div>
@@ -88,7 +88,7 @@ export default async function AdminPage() {
             <div className="bg-linear-to-b from-accent/50 to-surface p-5">
               <div className="flex items-start justify-between gap-3">
                 <p className="text-sm font-medium text-muted">This week</p>
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-[var(--shadow-card)] ring-1 ring-primary/10">
+                <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-(--shadow-card) ring-1 ring-primary/10">
                   <CalendarRange className="size-5" aria-hidden />
                 </span>
               </div>
@@ -153,7 +153,7 @@ export default async function AdminPage() {
                   className="mt-6 flex flex-col items-center rounded-xl bg-accent/60 px-4 py-10 text-center"
                   role="status"
                 >
-                  <span className="flex size-12 items-center justify-center rounded-2xl bg-surface text-primary shadow-[var(--shadow-card)] ring-1 ring-primary/10">
+                  <span className="flex size-12 items-center justify-center rounded-2xl bg-surface text-primary shadow-(--shadow-card) ring-1 ring-primary/10">
                     <Stethoscope className="size-5" aria-hidden />
                   </span>
                   <p className="mt-4 font-medium text-foreground">No visits this week</p>
@@ -242,10 +242,10 @@ function CatalogLink({
 }) {
   return (
     <Link href={href} className="block h-full rounded-xl">
-      <Card className="flex h-full flex-col overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[var(--shadow-card)]">
+      <Card className="flex h-full flex-col overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
         <div className="h-1.5 bg-primary" />
         <div className="flex flex-1 flex-col bg-linear-to-b from-accent/40 to-surface p-4">
-          <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-[var(--shadow-card)] ring-1 ring-primary/10">
+          <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-(--shadow-card) ring-1 ring-primary/10">
             <Icon className="size-5" aria-hidden />
           </span>
           <p className="mt-4 text-sm text-muted">{label}</p>

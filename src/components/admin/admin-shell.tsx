@@ -14,7 +14,7 @@ function SidebarBrand() {
       <img
         src={APP_LOGO}
         alt={APP_NAME}
-        className="h-12 w-auto max-w-[15rem] shrink-0 object-contain object-left"
+        className="h-12 w-auto max-w-60 shrink-0 object-contain object-left"
       />
     </div>
   );
@@ -138,7 +138,7 @@ export function AdminShell({
         <img
           src={APP_LOGO}
           alt={APP_NAME}
-          className="h-11 w-auto max-w-[14rem] shrink-0 object-contain object-left"
+          className="h-11 w-auto max-w-56 shrink-0 object-contain object-left"
         />
       </header>
 
@@ -189,7 +189,7 @@ export function AdminShell({
         aria-label="Staff navigation"
         className="fixed inset-y-0 left-0 hidden w-72 flex-col overflow-y-auto border-r border-border bg-surface lg:flex"
       >
-        <div className="flex h-[4.5rem] items-center border-b border-border bg-linear-to-b from-accent to-surface px-4">
+        <div className="flex h-18 items-center border-b border-border bg-linear-to-b from-accent to-surface px-4">
           <SidebarBrand />
         </div>
         <AdminNav />

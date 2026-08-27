@@ -20,11 +20,11 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0">
-        <h1 className="break-words text-2xl font-semibold tracking-tight text-foreground">
+        <h1 className="wrap-break-word text-2xl font-semibold tracking-tight text-foreground">
           {title}
         </h1>
         {description ? (
-          <p className="mt-1 max-w-2xl break-words text-sm text-muted">{description}</p>
+          <p className="mt-1 max-w-2xl wrap-break-word text-sm text-muted">{description}</p>
         ) : null}
       </div>
       {actions ? (

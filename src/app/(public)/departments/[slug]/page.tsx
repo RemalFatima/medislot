@@ -41,7 +41,7 @@ export default async function DepartmentDetailPage({
           />
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex min-w-0 gap-4">
-              <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-surface text-lg font-semibold text-primary shadow-[var(--shadow-card)] ring-1 ring-primary/10">
+              <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-surface text-lg font-semibold text-primary shadow-(--shadow-card) ring-1 ring-primary/10">
                 {department.name.slice(0, 1).toUpperCase()}
               </span>
               <div className="min-w-0">

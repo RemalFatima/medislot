@@ -16,7 +16,7 @@ import { humanErrorMessage } from "@/lib/human-error";
 export const fieldClass = cn(
   "h-11 w-full min-w-0 max-w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground",
   "outline-none transition-colors placeholder:text-muted",
-  "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+  "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-(--ring)",
   "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted",
   "aria-invalid:border-danger",
 );
@@ -27,7 +27,7 @@ export const checkboxClass =
 export const textareaClass = cn(
   "w-full min-w-0 max-w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground",
   "outline-none transition-colors placeholder:text-muted",
-  "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+  "focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-(--ring)",
   "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted",
   "aria-invalid:border-danger",
 );

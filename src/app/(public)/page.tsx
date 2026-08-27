@@ -106,7 +106,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
+          <div className="rounded-2xl border border-border bg-surface p-5 shadow-(--shadow-card)">
             <p className="text-sm font-semibold text-foreground">How booking works</p>
             <ol className="mt-4 space-y-3">
               {bookingSteps.map((step) => {
@@ -200,11 +200,11 @@ export default async function Home() {
               const Icon = step.icon;
               return (
                 <li key={step.title}>
-                  <Card className="h-full overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[var(--shadow-card)]">
+                  <Card className="h-full overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
                     <div className="h-1.5 bg-primary" />
                     <div className="flex h-full flex-col bg-linear-to-b from-accent/40 to-surface p-6">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[var(--shadow-card)]">
+                        <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-(--shadow-card)">
                           <Icon className="size-6" aria-hidden />
                         </span>
                         <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold tabular-nums text-primary ring-1 ring-primary/15">
@@ -240,7 +240,7 @@ export default async function Home() {
               const Icon = reason.icon;
               return (
                 <li key={reason.title}>
-                  <Card className="h-full overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[var(--shadow-card)]">
+                  <Card className="h-full overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
                     <div className="flex h-full gap-4 border-l-[3px] border-primary p-5">
                       <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-primary ring-1 ring-primary/10">
                         <Icon className="size-5" aria-hidden />
