@@ -7,10 +7,27 @@ import {
   getAvailableSlots,
 } from "@/server/appointments/slots";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
-import { fieldClass } from "@/components/ui/field";
+import { doctorInitials } from "@/components/public/doctor-card";
+import { BookingFilters } from "@/components/public/booking-filters";
+import { BookingSteps } from "@/components/public/booking-steps";
+import { buttonClass } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/empty-state";
 import { BookForm } from "./book-form";
 
 export const dynamic = "force-dynamic";
+
+function formatCalendarDate(date: string): string {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
 
 export default async function BookDoctorPage({
   params,
@@ -44,70 +61,129 @@ export default async function BookDoctorPage({
       : [];
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-12">
-      <p className="text-sm text-zinc-500">
-        <Link href={`/doctors/${doctor.slug}`} className="hover:text-zinc-900">
-          ← {doctor.full_name}
-        </Link>
-      </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-950">
-        Book an appointment
-      </h1>
-      <p className="mt-1 text-sm text-zinc-600">
-        Guest booking — name and phone only. Confirmed instantly if the slot is
-        free.
-      </p>
-
-      {doctor.services.length === 0 ? (
-        <p className="mt-6 text-sm text-zinc-600">
-          This doctor has no bookable services yet.
+    <main className="flex-1 py-10 sm:py-12">
+      <Container className="max-w-4xl">
+        <p className="mb-4 text-sm text-muted">
+          <Link href={`/doctors/${doctor.slug}`} className="hover:text-foreground">
+            {doctor.full_name}
+          </Link>
+          <span aria-hidden className="mx-2">
+            /
+          </span>
+          <span className="text-foreground">Book</span>
         </p>
-      ) : (
-        <>
-          <form className="mt-6 grid gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto]">
-            <label className="text-sm">
-              <span className="mb-1 block font-medium text-zinc-800">Service</span>
-              <select
-                name="service"
-                defaultValue={selectedService.id}
-                className={`${fieldClass} w-full`}
-              >
-                {doctor.services.map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.name} ({service.duration_minutes} min)
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block font-medium text-zinc-800">Date</span>
-              <input
-                type="date"
-                name="date"
-                min={today}
-                max={maxDate}
-                defaultValue={date}
-                className={`${fieldClass} w-full`}
-              />
-            </label>
-            <div className="flex items-end">
-              <button
-                type="submit"
-                className="h-11 w-full rounded-md border border-zinc-300 px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
-              >
-                Show times
-              </button>
-            </div>
-          </form>
 
-          <BookForm
-            doctorId={doctor.id}
-            serviceId={selectedService.id}
-            timezone={timezone}
-            slots={slots}
+        <BookingSteps current={4} />
+
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          Book an appointment
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+          Choose a service and date, pick an available time, then enter your
+          details. Your appointment is confirmed instantly if the slot is still
+          free.
+        </p>
+
+        {doctor.services.length === 0 || !selectedService ? (
+          <EmptyState
+            className="mt-8"
+            title="This doctor has no bookable services yet"
+            description="Online booking will be available once the clinic assigns a service."
+            action={
+              <Link
+                href={`/doctors/${doctor.slug}`}
+                className={buttonClass({ variant: "secondary" })}
+              >
+                Back to profile
+              </Link>
+            }
           />
-        </>
-      )}
+        ) : (
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+            <aside className="lg:col-start-2">
+              <Card className="p-5 lg:sticky lg:top-24">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                  Your booking
+                </p>
+                <div className="mt-4 flex gap-3">
+                  <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent text-sm font-semibold text-primary">
+                    {doctor.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={doctor.photo_url}
+                        alt=""
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      doctorInitials(doctor.full_name)
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground">{doctor.full_name}</p>
+                    <p className="text-sm text-muted">
+                      {doctor.profession}
+                      {doctor.specialization ? ` · ${doctor.specialization}` : ""}
+                    </p>
+                  </div>
+                </div>
+                <dl className="mt-4 space-y-3 text-sm">
+                  {doctor.departments.length > 0 ? (
+                    <div>
+                      <dt className="text-muted">Department</dt>
+                      <dd className="mt-0.5 text-foreground">
+                        {doctor.departments.map((department) => department.name).join(", ")}
+                      </dd>
+                    </div>
+                  ) : null}
+                  <div>
+                    <dt className="text-muted">Service</dt>
+                    <dd className="mt-0.5 text-foreground">
+                      {selectedService.name} · {selectedService.duration_minutes} min
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">Date</dt>
+                    <dd className="mt-0.5 text-foreground">
+                      {formatCalendarDate(date)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">Timezone</dt>
+                    <dd className="mt-0.5 text-foreground">
+                      {timezone.replace(/_/g, " ")}
+                    </dd>
+                  </div>
+                </dl>
+              </Card>
+            </aside>
+
+            <div className="lg:col-start-1 lg:row-start-1">
+              <Card className="p-5 sm:p-6">
+                <h2 className="text-base font-semibold text-foreground">
+                  Service and date
+                </h2>
+                <p className="mt-1 mb-4 text-sm text-muted">
+                  Times update when you press Show times.
+                </p>
+                <BookingFilters
+                  action={`/doctors/${doctor.slug}/book`}
+                  services={doctor.services}
+                  selectedServiceId={selectedService.id}
+                  today={today}
+                  maxDate={maxDate}
+                  date={date}
+                />
+                <BookForm
+                  doctorId={doctor.id}
+                  serviceId={selectedService.id}
+                  timezone={timezone}
+                  slots={slots}
+                />
+              </Card>
+            </div>
+          </div>
+        )}
+      </Container>
     </main>
   );
 }

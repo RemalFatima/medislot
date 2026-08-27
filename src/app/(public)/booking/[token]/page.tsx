@@ -1,15 +1,30 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CircleCheck } from "lucide-react";
 import { getBookingByToken } from "@/server/appointments/book";
+import { APPOINTMENT_STATUS_LABELS } from "@/server/appointments/labels";
+import { BookingSteps } from "@/components/public/booking-steps";
+import { CopyReference } from "@/components/public/copy-reference";
+import { Badge } from "@/components/ui/badge";
+import { buttonClass } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
 
 export const dynamic = "force-dynamic";
 
-function formatWhen(iso: string, timeZone: string): string {
+function formatDate(iso: string, timeZone: string): string {
   return new Intl.DateTimeFormat("en-GB", {
     timeZone,
-    weekday: "short",
+    weekday: "long",
     day: "numeric",
-    month: "short",
+    month: "long",
     year: "numeric",
+  }).format(new Date(iso));
+}
+
+function formatTime(iso: string, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
     hour: "2-digit",
     minute: "2-digit",
     hourCycle: "h23",
@@ -28,48 +43,102 @@ export default async function BookingConfirmationPage({
     notFound();
   }
 
+  const rows = [
+    { label: "Doctor", value: booking.doctor_name },
+    { label: "Service", value: booking.service_name },
+    { label: "Date", value: formatDate(booking.start_at, booking.timezone) },
+    {
+      label: "Time",
+      value: `${formatTime(booking.start_at, booking.timezone)} (${booking.timezone.replace(/_/g, " ")})`,
+    },
+    { label: "Patient", value: booking.patient_name },
+    { label: "Clinic", value: booking.organization_name },
+  ];
+
   return (
-    <main className="mx-auto w-full max-w-xl px-6 py-12">
-      <p className="text-sm font-medium text-emerald-800">Appointment confirmed</p>
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">
-        You&apos;re booked
-      </h1>
-      <dl className="mt-8 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
-        <div className="px-4 py-3">
-          <dt className="text-xs text-zinc-500">Confirmation code</dt>
-          <dd className="mt-1 font-mono text-sm text-zinc-950">
-            {booking.confirmation_token}
-          </dd>
+    <main className="flex-1 py-10 sm:py-12">
+      <Container className="max-w-xl">
+        <BookingSteps current={6} />
+
+        <Card className="p-6 sm:p-8">
+          <div className="flex items-start gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-success-bg text-success">
+              <CircleCheck className="size-6" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-sm font-medium text-success">
+                  Appointment confirmed
+                </p>
+                <Badge tone="success">
+                  {APPOINTMENT_STATUS_LABELS[booking.status]}
+                </Badge>
+              </div>
+              <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+                You&apos;re booked
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Your visit is reserved. Save this page or copy the confirmation
+                code so you can find the appointment later.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-xl border border-border bg-surface-muted px-4 py-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted">
+                  Confirmation code
+                </p>
+                <p className="mt-1 break-all font-mono text-sm text-foreground">
+                  {booking.confirmation_token}
+                </p>
+              </div>
+              <CopyReference value={booking.confirmation_token} />
+            </div>
+          </div>
+
+          <dl className="mt-6 divide-y divide-border rounded-xl border border-border">
+            {rows.map((row) => (
+              <div
+                key={row.label}
+                className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:justify-between"
+              >
+                <dt className="text-sm text-muted">{row.label}</dt>
+                <dd className="text-sm font-medium text-foreground sm:text-right">
+                  {row.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Card>
+
+        <div className="mt-6 rounded-xl border border-border bg-surface px-5 py-5">
+          <h2 className="font-semibold text-foreground">What to do next</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-muted">
+            <li>Keep the confirmation code. Clinic staff can look up your visit with it.</li>
+            <li>Arrive a little early on the appointment date.</li>
+            <li>
+              If you need to change or cancel, contact the clinic directly. This
+              page cannot reschedule the visit.
+            </li>
+          </ul>
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <Link href="/" className={buttonClass({ className: "w-full sm:w-auto" })}>
+              Back to home
+            </Link>
+            <Link
+              href="/doctors"
+              className={buttonClass({
+                variant: "secondary",
+                className: "w-full sm:w-auto",
+              })}
+            >
+              Browse doctors
+            </Link>
+          </div>
         </div>
-        <div className="px-4 py-3">
-          <dt className="text-xs text-zinc-500">When</dt>
-          <dd className="mt-1 text-sm text-zinc-950">
-            {formatWhen(booking.start_at, booking.timezone)}
-            <span className="block text-zinc-500">{booking.timezone}</span>
-          </dd>
-        </div>
-        <div className="px-4 py-3">
-          <dt className="text-xs text-zinc-500">Doctor</dt>
-          <dd className="mt-1 text-sm text-zinc-950">{booking.doctor_name}</dd>
-        </div>
-        <div className="px-4 py-3">
-          <dt className="text-xs text-zinc-500">Service</dt>
-          <dd className="mt-1 text-sm text-zinc-950">{booking.service_name}</dd>
-        </div>
-        <div className="px-4 py-3">
-          <dt className="text-xs text-zinc-500">Name</dt>
-          <dd className="mt-1 text-sm text-zinc-950">{booking.patient_name}</dd>
-        </div>
-        <div className="px-4 py-3">
-          <dt className="text-xs text-zinc-500">Clinic</dt>
-          <dd className="mt-1 text-sm text-zinc-950">
-            {booking.organization_name}
-          </dd>
-        </div>
-      </dl>
-      <p className="mt-6 text-sm text-zinc-600">
-        Save this confirmation code. Staff can look up the visit with it.
-      </p>
+      </Container>
     </main>
   );
 }
