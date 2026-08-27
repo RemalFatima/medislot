@@ -15,7 +15,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "rounded-xl border border-dashed border-border bg-surface px-6 py-12 text-center",
+        "rounded-xl border border-dashed border-border bg-surface px-4 py-10 text-center sm:px-6 sm:py-12",
         className,
       )}
     >
@@ -23,7 +23,11 @@ export function EmptyState({
       {description ? (
         <p className="mx-auto mt-1 max-w-md text-sm text-muted">{description}</p>
       ) : null}
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? (
+        <div className="mt-4 flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
+          {action}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { getStaffContext } from "@/server/auth/getStaffContext";
 import { redirect } from "next/navigation";
+import { Card } from "@/components/ui/card";
 import { LoginForm } from "./login-form";
 
 export const dynamic = "force-dynamic";
@@ -12,17 +13,16 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-16">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-950">
+    <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 sm:py-16">
+      <Card className="w-full max-w-sm p-6 sm:p-8">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">
           Staff sign in
         </h1>
-        <p className="mt-2 mb-6 text-sm text-zinc-600">
-          Sign in with your clinic account. Patient registration is not
-          available.
+        <p className="mt-2 mb-6 text-sm text-muted">
+          Sign in with your clinic account. Patient registration is not available.
         </p>
         <LoginForm />
-      </div>
+      </Card>
     </main>
   );
 }

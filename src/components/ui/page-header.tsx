@@ -20,7 +20,7 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h1 className="break-words text-2xl font-semibold tracking-tight text-foreground">
           {title}
         </h1>
         {description ? (
@@ -28,7 +28,9 @@ export function PageHeader({
         ) : null}
       </div>
       {actions ? (
-        <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
+        <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+          {actions}
+        </div>
       ) : null}
     </div>
   );

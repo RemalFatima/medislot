@@ -1,6 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import { FormError } from "@/components/admin/form-error";
+import { Button } from "@/components/ui/button";
+import { Field, fieldClass } from "@/components/ui/field";
 import { loginAction, type LoginState } from "./actions";
 
 const initialState: LoginState = {};
@@ -10,38 +13,28 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-4">
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium text-zinc-800">Email</span>
+      <Field label="Email">
         <input
           type="email"
           name="email"
           autoComplete="email"
           required
-          className="h-11 rounded-md border border-zinc-300 bg-white px-3 text-zinc-900 outline-none focus:border-zinc-900"
+          className={fieldClass}
         />
-      </label>
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium text-zinc-800">Password</span>
+      </Field>
+      <Field label="Password">
         <input
           type="password"
           name="password"
           autoComplete="current-password"
           required
-          className="h-11 rounded-md border border-zinc-300 bg-white px-3 text-zinc-900 outline-none focus:border-zinc-900"
+          className={fieldClass}
         />
-      </label>
-      {state.error ? (
-        <p className="text-sm text-red-700" role="alert">
-          {state.error}
-        </p>
-      ) : null}
-      <button
-        type="submit"
-        disabled={pending}
-        className="h-11 rounded-md bg-zinc-900 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
-      >
+      </Field>
+      <FormError message={state.error} />
+      <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Signing in…" : "Sign in"}
-      </button>
+      </Button>
     </form>
   );
 }
