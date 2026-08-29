@@ -1,16 +1,25 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import type { Department } from "@/server/catalog/departments";
 import type { DoctorDetail } from "@/server/catalog/doctors";
 import type { Service } from "@/server/catalog/services";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { checkboxClass, Field, fieldClass, textareaClass, ValidatedForm } from "@/components/ui/field";
+import { cn } from "@/lib/cn";
+import { serviceIdsForDepartments } from "@/lib/catalog/department-services";
 import type { CatalogFormState } from "../form-utils";
 import { createDoctorAction, updateDoctorAction } from "./actions";
 
 const initialState: CatalogFormState = {};
+
+function toggleValue(values: string[], value: string, checked: boolean): string[] {
+  if (checked) {
+    return values.includes(value) ? values : [...values, value];
+  }
+  return values.filter((item) => item !== value);
+}
 
 export function DoctorForm({
   doctor,
@@ -25,8 +34,77 @@ export function DoctorForm({
 }) {
   const action = doctor ? updateDoctorAction : createDoctorAction;
   const [state, formAction, pending] = useActionState(action, initialState);
-  const selectedDepartments = new Set(doctor?.department_ids ?? []);
-  const selectedServices = new Set(doctor?.service_ids ?? []);
+  const [departmentIds, setDepartmentIds] = useState(doctor?.department_ids ?? []);
+  const [serviceIds, setServiceIds] = useState(doctor?.service_ids ?? []);
+  const [skippedAutoServiceIds, setSkippedAutoServiceIds] = useState<string[]>([]);
+  const [autoAddedIds, setAutoAddedIds] = useState<string[]>([]);
+
+  const suggestedServiceIds = useMemo(
+    () => serviceIdsForDepartments(departmentIds, departments, services),
+    [departmentIds, departments, services],
+  );
+
+  const suggestedServices = services.filter((service) =>
+    suggestedServiceIds.has(service.id),
+  );
+  const otherServices = services.filter(
+    (service) => !suggestedServiceIds.has(service.id),
+  );
+
+  function onDepartmentChange(departmentId: string, checked: boolean) {
+    const nextDepartments = toggleValue(departmentIds, departmentId, checked);
+    setDepartmentIds(nextDepartments);
+
+    const nextSuggested = serviceIdsForDepartments(
+      nextDepartments,
+      departments,
+      services,
+    );
+
+    if (checked) {
+      const skipped = new Set(skippedAutoServiceIds);
+      const selected = new Set(serviceIds);
+      const added: string[] = [];
+      for (const serviceId of nextSuggested) {
+        if (!selected.has(serviceId) && !skipped.has(serviceId)) {
+          selected.add(serviceId);
+          added.push(serviceId);
+        }
+      }
+      setServiceIds([...selected]);
+      if (added.length > 0) {
+        setAutoAddedIds((current) => [...new Set([...current, ...added])]);
+      }
+      return;
+    }
+
+    setServiceIds(
+      serviceIds.filter(
+        (serviceId) =>
+          nextSuggested.has(serviceId) || !autoAddedIds.includes(serviceId),
+      ),
+    );
+    setAutoAddedIds(autoAddedIds.filter((serviceId) => nextSuggested.has(serviceId)));
+    setSkippedAutoServiceIds(
+      skippedAutoServiceIds.filter((serviceId) => nextSuggested.has(serviceId)),
+    );
+  }
+
+  function onServiceChange(serviceId: string, checked: boolean) {
+    setServiceIds((current) => toggleValue(current, serviceId, checked));
+    if (checked) {
+      setSkippedAutoServiceIds((current) =>
+        current.filter((id) => id !== serviceId),
+      );
+      return;
+    }
+    setAutoAddedIds((current) => current.filter((id) => id !== serviceId));
+    if (suggestedServiceIds.has(serviceId)) {
+      setSkippedAutoServiceIds((current) =>
+        current.includes(serviceId) ? current : [...current, serviceId],
+      );
+    }
+  }
 
   return (
     <ValidatedForm action={formAction} className="flex max-w-2xl flex-col gap-6">
@@ -140,7 +218,8 @@ export function DoctorForm({
             Departments
           </h2>
           <p className="mt-1 text-sm text-muted">
-            Assign where this doctor appears in the public catalog.
+            Assign where this doctor appears in the public catalog. Matching
+            services are selected automatically — you can still uncheck them.
           </p>
           {departments.length === 0 ? (
             <p className="mt-3 text-sm text-muted">Create a department first.</p>
@@ -159,7 +238,10 @@ export function DoctorForm({
                     type="checkbox"
                     name="department_id"
                     value={department.id}
-                    defaultChecked={selectedDepartments.has(department.id)}
+                    checked={departmentIds.includes(department.id)}
+                    onChange={(event) =>
+                      onDepartmentChange(department.id, event.target.checked)
+                    }
                     disabled={readOnly}
                     className={checkboxClass}
                   />
@@ -181,38 +263,61 @@ export function DoctorForm({
             Services
           </h2>
           <p className="mt-1 text-sm text-muted">
-            Patients can only book services assigned here.
+            Patients can only book services assigned here. Department matches
+            appear first and stay highlighted until you uncheck them.
           </p>
           {services.length === 0 ? (
             <p className="mt-3 text-sm text-muted">Create a service first.</p>
           ) : (
-            <div
-              role="group"
-              aria-label="Services"
-              className="mt-3 grid gap-2 sm:grid-cols-2"
-            >
-              {services.map((service) => (
-                <label
-                  key={service.id}
-                  className="flex items-center gap-2.5 rounded-lg border border-border bg-surface px-3 py-2.5 text-sm has-checked:border-primary/40 has-checked:bg-accent"
-                >
-                  <input
-                    type="checkbox"
-                    name="service_id"
-                    value={service.id}
-                    defaultChecked={selectedServices.has(service.id)}
-                    disabled={readOnly}
-                    className={checkboxClass}
-                  />
-                  <span>
-                    {service.name}
-                    <span className="block text-xs text-muted">
-                      {service.duration_minutes} min
-                      {service.price !== null ? ` · ${service.price}` : ""}
-                    </span>
-                  </span>
-                </label>
-              ))}
+            <div className="mt-3 flex flex-col gap-5">
+              {suggestedServices.length > 0 ? (
+                <div>
+                  <p className="mb-2 text-xs font-semibold tracking-wider text-primary uppercase">
+                    From selected departments
+                  </p>
+                  <div
+                    role="group"
+                    aria-label="Suggested services"
+                    className="grid gap-2 sm:grid-cols-2"
+                  >
+                    {suggestedServices.map((service) => (
+                      <ServiceOption
+                        key={service.id}
+                        service={service}
+                        checked={serviceIds.includes(service.id)}
+                        suggested
+                        disabled={readOnly}
+                        onChange={onServiceChange}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {otherServices.length > 0 ? (
+                <div>
+                  {suggestedServices.length > 0 ? (
+                    <p className="mb-2 text-xs font-semibold tracking-wider text-muted uppercase">
+                      Other services
+                    </p>
+                  ) : null}
+                  <div
+                    role="group"
+                    aria-label="Services"
+                    className="grid gap-2 sm:grid-cols-2"
+                  >
+                    {otherServices.map((service) => (
+                      <ServiceOption
+                        key={service.id}
+                        service={service}
+                        checked={serviceIds.includes(service.id)}
+                        suggested={false}
+                        disabled={readOnly}
+                        onChange={onServiceChange}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
         </div>
@@ -249,5 +354,55 @@ export function DoctorForm({
         </Button>
       )}
     </ValidatedForm>
+  );
+}
+
+function ServiceOption({
+  service,
+  checked,
+  suggested,
+  disabled,
+  onChange,
+}: {
+  service: Service;
+  checked: boolean;
+  suggested: boolean;
+  disabled: boolean;
+  onChange: (serviceId: string, checked: boolean) => void;
+}) {
+  return (
+    <label
+      className={cn(
+        "flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm",
+        suggested
+          ? "border-primary/30 bg-accent"
+          : "border-border bg-surface",
+        "has-checked:border-primary/40 has-checked:bg-accent",
+      )}
+    >
+      <input
+        type="checkbox"
+        name="service_id"
+        value={service.id}
+        checked={checked}
+        onChange={(event) => onChange(service.id, event.target.checked)}
+        disabled={disabled}
+        className={`mt-0.5 ${checkboxClass}`}
+      />
+      <span className="min-w-0">
+        <span className="flex flex-wrap items-center gap-2">
+          {service.name}
+          {suggested ? (
+            <span className="rounded-full bg-surface px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-primary uppercase">
+              Suggested
+            </span>
+          ) : null}
+        </span>
+        <span className="mt-0.5 block text-xs text-muted">
+          {service.duration_minutes} min
+          {service.price !== null ? ` · ${service.price}` : ""}
+        </span>
+      </span>
+    </label>
   );
 }
