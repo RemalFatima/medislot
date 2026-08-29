@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, fieldClass, ValidatedForm } from "@/components/ui/field";
 
@@ -60,6 +61,7 @@ export function WalkInFilters({
       </Field>
       <div className="flex items-end">
         <Button type="submit" variant="secondary" disabled={pending} className="w-full">
+          <CalendarClock className="size-4" aria-hidden />
           {pending ? "Loading times…" : "Show times"}
         </Button>
       </div>

@@ -1,18 +1,13 @@
 import Link from "next/link";
+import { DoorOpen } from "lucide-react";
 import { calendarDateInTimeZone } from "@/domain/availability/timezone";
-import { AppointmentStatusBadge } from "@/components/admin/appointment-status-badge";
+import { AppointmentCard } from "@/components/admin/appointment-card";
 import { AppointmentsFilters } from "@/components/admin/appointments-filters";
 import { requireStaff } from "@/server/auth/requireStaff";
-import {
-  formatAppointmentTime,
-  formatAppointmentWhen,
-} from "@/server/appointments/format";
-import { APPOINTMENT_SOURCE_LABELS } from "@/server/appointments/labels";
 import { listAppointments } from "@/server/appointments/list";
 import { listDoctors } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
-import { Badge } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -70,6 +65,13 @@ export default async function AdminAppointmentsPage({
   const serviceName = new Map(services.map((service) => [service.id, service.name]));
   const isToday = date === today;
   const hasExtraFilters = Boolean(doctorId || status);
+  const returnQuery = new URLSearchParams({ date });
+  if (doctorId) {
+    returnQuery.set("doctor", doctorId);
+  }
+  if (status) {
+    returnQuery.set("status", status);
+  }
   const todayHref = hasExtraFilters
     ? `/admin/appointments?date=${today}${doctorId ? `&doctor=${doctorId}` : ""}${status ? `&status=${status}` : ""}`
     : "/admin/appointments";
@@ -87,7 +89,8 @@ export default async function AdminAppointmentsPage({
               </Link>
             )}
             <Link href="/admin/appointments/new" className={buttonClass()}>
-              Walk-in
+              <DoorOpen className="size-4" aria-hidden />
+              New walk-in
             </Link>
           </div>
         }
@@ -113,112 +116,38 @@ export default async function AdminAppointmentsPage({
           }
           action={
             <Link href="/admin/appointments/new" className={buttonClass({ variant: "secondary" })}>
-              Create walk-in
+              <DoorOpen className="size-4" aria-hidden />
+              New walk-in
             </Link>
           }
         />
       ) : (
         <>
-          <p className="mt-6 text-sm text-muted">
+          <p className="mt-4 text-sm text-muted">
             {appointments.length === 1
               ? "1 appointment"
               : `${appointments.length} appointments`}
             {isToday ? " today" : ""}
           </p>
 
-          <ul className="mt-3 grid gap-3 lg:hidden">
+          <ul className="mt-4 grid gap-4 xl:grid-cols-2">
             {appointments.map((appointment) => (
               <li key={appointment.id}>
-                <Card className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-lg font-semibold tabular-nums text-foreground">
-                        {formatAppointmentTime(appointment.start_at, timezone)}
-                      </p>
-                      <p className="mt-1 font-medium text-foreground">
-                        {appointment.patient_name}
-                      </p>
-                      <p className="text-sm text-muted">{appointment.patient_phone}</p>
-                    </div>
-                    <AppointmentStatusBadge status={appointment.status} />
-                  </div>
-                  <p className="mt-3 text-sm text-muted">
-                    {doctorName.get(appointment.doctor_id) ?? "Doctor"} ·{" "}
-                    {serviceName.get(appointment.service_id) ?? "Service"}
-                  </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <Badge tone={appointment.source === "public" ? "primary" : "neutral"}>
-                      {APPOINTMENT_SOURCE_LABELS[appointment.source]}
-                    </Badge>
-                    <span className="truncate font-mono text-xs text-muted">
-                      {appointment.confirmation_token}
-                    </span>
-                  </div>
-                  {appointment.notes ? (
-                    <p className="mt-2 text-sm text-muted">{appointment.notes}</p>
-                  ) : null}
-                  <div className="mt-4">
-                    <StatusForm id={appointment.id} status={appointment.status} />
-                  </div>
-                </Card>
+                <AppointmentCard
+                  appointment={appointment}
+                  doctorName={doctorName.get(appointment.doctor_id) ?? "Doctor"}
+                  serviceName={serviceName.get(appointment.service_id) ?? "Service"}
+                  timezone={timezone}
+                >
+                  <StatusForm
+                    id={appointment.id}
+                    status={appointment.status}
+                    returnQuery={returnQuery.toString()}
+                  />
+                </AppointmentCard>
               </li>
             ))}
           </ul>
-
-          <div className="mt-3 hidden overflow-x-auto lg:block">
-            <table className="w-full min-w-176 border-collapse text-sm">
-              <caption className="sr-only">Appointments</caption>
-              <thead>
-                <tr className="border-b border-border text-left text-muted">
-                  <th scope="col" className="py-3 pr-4 font-medium">Time</th>
-                  <th scope="col" className="py-3 pr-4 font-medium">Patient</th>
-                  <th scope="col" className="py-3 pr-4 font-medium">Doctor</th>
-                  <th scope="col" className="py-3 pr-4 font-medium">Service</th>
-                  <th scope="col" className="py-3 pr-4 font-medium">Source</th>
-                  <th scope="col" className="py-3 pr-4 font-medium">Status</th>
-                  <th scope="col" className="py-3 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appointment) => (
-                  <tr key={appointment.id} className="border-b border-border align-top">
-                    <td className="py-3 pr-4">
-                      <p className="font-semibold tabular-nums text-foreground">
-                        {formatAppointmentTime(appointment.start_at, timezone)}
-                      </p>
-                      <p className="text-xs text-muted">
-                        {formatAppointmentWhen(appointment.start_at, timezone)}
-                      </p>
-                    </td>
-                    <td className="py-3 pr-4">
-                      <p className="font-medium text-foreground">{appointment.patient_name}</p>
-                      <p className="text-muted">{appointment.patient_phone}</p>
-                      {appointment.notes ? (
-                        <p className="mt-1 text-muted">{appointment.notes}</p>
-                      ) : null}
-                    </td>
-                    <td className="py-3 pr-4 text-foreground">
-                      {doctorName.get(appointment.doctor_id) ?? "Doctor"}
-                    </td>
-                    <td className="py-3 pr-4 text-foreground">
-                      {serviceName.get(appointment.service_id) ?? "Service"}
-                    </td>
-                    <td className="py-3 pr-4">
-                      <Badge tone={appointment.source === "public" ? "primary" : "neutral"}>
-                        {APPOINTMENT_SOURCE_LABELS[appointment.source]}
-                      </Badge>
-                    </td>
-                    <td className="py-3 pr-4">
-                      <AppointmentStatusBadge status={appointment.status} />
-                    </td>
-                    <td className="py-3">
-                      <StatusForm id={appointment.id} status={appointment.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </>
       )}
     </main>

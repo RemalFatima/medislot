@@ -7,6 +7,7 @@ import {
   DepartmentCard,
 } from "@/components/public/department-card";
 import { buttonClass } from "@/components/ui/button";
+import { cardGridHoverClass } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -61,7 +62,7 @@ export default async function DepartmentsPage() {
               <Building2 className="size-4 text-primary" aria-hidden />
               {countLabel}
             </p>
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${cardGridHoverClass}`}>
               {departments.map((department) => (
                 <li key={department.id}>
                   <DepartmentCard

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import {
@@ -9,6 +8,7 @@ import {
   updateDepartment,
 } from "@/server/catalog/departments";
 import { humanErrorMessage } from "@/lib/human-error";
+import { redirectWithFlash } from "@/lib/flash";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -49,7 +49,7 @@ export async function createDepartmentAction(
   }
 
   revalidateCatalog();
-  redirect("/admin/departments");
+  redirectWithFlash("/admin/departments", "created");
 }
 
 export async function updateDepartmentAction(
@@ -75,5 +75,5 @@ export async function updateDepartmentAction(
   }
 
   revalidateCatalog();
-  redirect("/admin/departments");
+  redirectWithFlash("/admin/departments", "updated");
 }

@@ -1,5 +1,6 @@
 export type CatalogFormState = {
   error?: string;
+  success?: string;
 };
 
 export function readCheckbox(formData: FormData, name: string): boolean {

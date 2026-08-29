@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { updateOrganizationSettings } from "@/server/settings/organization";
+import { redirectWithFlash } from "@/lib/flash";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -50,5 +51,5 @@ export async function updateOrganizationSettingsAction(
   revalidatePath("/admin/settings");
   revalidatePath("/admin");
   revalidatePath("/", "layout");
-  return {};
+  redirectWithFlash("/admin/settings", "saved");
 }

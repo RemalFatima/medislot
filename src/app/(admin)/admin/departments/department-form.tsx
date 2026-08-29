@@ -24,7 +24,7 @@ export function DepartmentForm({
   const [state, formAction, pending] = useActionState(action, initialState);
 
   return (
-    <ValidatedForm action={formAction} className="flex max-w-xl flex-col gap-4">
+    <ValidatedForm action={formAction} className="flex flex-col gap-5">
       {department ? <input type="hidden" name="id" value={department.id} /> : null}
       <Field label="Name">
         <input
@@ -55,7 +55,7 @@ export function DepartmentForm({
           className={fieldClass}
         />
       </Field>
-      <label className="flex items-start gap-2.5 text-sm text-foreground">
+      <label className="flex items-start gap-3 rounded-lg border border-border bg-surface px-3 py-3 text-sm text-foreground">
         <input
           type="checkbox"
           name="is_active"
@@ -64,9 +64,9 @@ export function DepartmentForm({
           className={`mt-0.5 ${checkboxClass}`}
         />
         <span>
-          Active
+          Active on the public site
           <span className="mt-0.5 block text-xs text-muted">
-            Hidden departments are not shown on the public site.
+            Hidden departments are not shown to patients.
           </span>
         </span>
       </label>
@@ -75,7 +75,13 @@ export function DepartmentForm({
         <p className="text-sm text-muted">Only owners and admins can edit departments.</p>
       ) : (
         <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-          {pending ? "Saving…" : department ? "Save department" : "Create department"}
+          {pending
+            ? department
+              ? "Updating…"
+              : "Creating…"
+            : department
+              ? "Update department"
+              : "Create department"}
         </Button>
       )}
     </ValidatedForm>

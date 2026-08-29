@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { CatalogPageHero } from "@/components/admin/catalog-page-hero";
 import { VisibilityBadge } from "@/components/admin/visibility-badge";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
@@ -7,7 +8,6 @@ import { getDoctorById } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
 import { listDoctorAvailability } from "@/server/scheduling/availability";
 import { getOrganizationTimezone } from "@/server/tenant/getOrganizationTimezone";
-import { PageHeader } from "@/components/ui/page-header";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { DoctorForm } from "../doctor-form";
 import { WeeklyHoursForm } from "../weekly-hours-form";
@@ -36,31 +36,36 @@ export default async function EditDoctorPage({
   const canManage = canManageCatalog(staff.role);
 
   return (
-    <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <Breadcrumb
-        items={[
-          { href: "/admin/doctors", label: "Doctors" },
-          { label: doctor.full_name },
-        ]}
-      />
-      <PageHeader
+    <main className="flex-1">
+      <CatalogPageHero
+        eyebrow="Catalog"
         title={doctor.full_name}
         description="Profile, departments, services, and weekly hours. Uncheck Active to hide the public profile."
         actions={<VisibilityBadge active={doctor.is_active} />}
+        breadcrumb={
+          <Breadcrumb
+            items={[
+              { href: "/admin/doctors", label: "Doctors" },
+              { label: doctor.full_name },
+            ]}
+          />
+        }
       />
-      <DoctorForm
-        doctor={doctor}
-        departments={departments}
-        services={services}
-        readOnly={!canManage}
-      />
-      <WeeklyHoursForm
-        key={windows.map((window) => window.id).join()}
-        doctorId={doctor.id}
-        windows={windows}
-        timezone={timezone}
-        readOnly={!canManage}
-      />
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <DoctorForm
+          doctor={doctor}
+          departments={departments}
+          services={services}
+          readOnly={!canManage}
+        />
+        <WeeklyHoursForm
+          key={windows.map((window) => window.id).join()}
+          doctorId={doctor.id}
+          windows={windows}
+          timezone={timezone}
+          readOnly={!canManage}
+        />
+      </div>
     </main>
   );
 }

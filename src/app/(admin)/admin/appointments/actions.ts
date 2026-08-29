@@ -1,13 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { ZodError } from "zod";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { bookAppointment } from "@/server/appointments/book";
 import { SlotUnavailableError, DuplicateBookingError } from "@/server/appointments/errors";
 import { updateAppointmentStatus } from "@/server/appointments/updateStatus";
-import { humanErrorMessage } from "@/lib/human-error";
+import { humanErrorMessage, isZodError } from "@/lib/human-error";
+import { redirectWithFlash } from "@/lib/flash";
 import type { CatalogFormState } from "../form-utils";
 import { readString } from "../form-utils";
 
@@ -23,7 +22,7 @@ export async function updateAppointmentStatusAction(
       status: readString(formData, "status"),
     });
   } catch (error) {
-    if (error instanceof ZodError) {
+    if (isZodError(error)) {
       return { error: error.issues[0]?.message ?? "Could not update status." };
     }
     return {
@@ -32,7 +31,15 @@ export async function updateAppointmentStatusAction(
   }
 
   revalidatePath("/admin/appointments");
-  return {};
+  const query = readString(formData, "return_query");
+  const safeQuery = query
+    .split("&")
+    .filter((part) => /^(date|doctor|status)=/.test(part))
+    .join("&");
+  redirectWithFlash(
+    safeQuery ? `/admin/appointments?${safeQuery}` : "/admin/appointments",
+    "updated",
+  );
 }
 
 export async function createWalkInAction(
@@ -59,7 +66,7 @@ export async function createWalkInAction(
     if (error instanceof DuplicateBookingError) {
       return { error: error.message };
     }
-    if (error instanceof ZodError) {
+    if (isZodError(error)) {
       return {
         error: error.issues[0]?.message ?? "Check the walk-in details.",
       };
@@ -70,5 +77,5 @@ export async function createWalkInAction(
   }
 
   revalidatePath("/admin/appointments");
-  redirect("/admin/appointments");
+  redirectWithFlash("/admin/appointments", "created");
 }

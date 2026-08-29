@@ -1,6 +1,12 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
+export const cardLiftClass =
+  "transition-[transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-primary/30";
+
+export const cardGridHoverClass =
+  "[&>li]:transition-[opacity,filter] [&>li]:duration-200 [&:has(li:hover)>li]:opacity-70 [&:has(li:hover)>li]:grayscale [&:has(li:hover)>li:hover]:opacity-100 [&:has(li:hover)>li:hover]:grayscale-0";
+
 export function Card({
   className,
   ...props
@@ -8,7 +14,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-xl border border-border bg-surface shadow-(--shadow-card)",
+        "min-w-0 rounded-2xl border border-border bg-surface shadow-(--shadow-card)",
         className,
       )}
       {...props}

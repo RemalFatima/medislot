@@ -10,6 +10,7 @@ import {
   createException,
   deleteException,
 } from "@/server/scheduling/exceptions";
+import { redirectWithFlash } from "@/lib/flash";
 import type { CatalogFormState } from "./form-utils";
 import { readString } from "./form-utils";
 
@@ -60,7 +61,7 @@ export async function saveDoctorAvailabilityAction(
 
   const doctor = await getDoctorById(doctorId);
   revalidateDoctor(doctorId, doctor?.slug);
-  return {};
+  redirectWithFlash(`/admin/doctors/${doctorId}`, "saved");
 }
 
 export async function createExceptionAction(
@@ -88,7 +89,7 @@ export async function createExceptionAction(
   }
 
   revalidateHolidays();
-  return {};
+  redirectWithFlash("/admin/holidays", "added");
 }
 
 export async function deleteExceptionAction(
@@ -114,5 +115,5 @@ export async function deleteExceptionAction(
   }
 
   revalidateHolidays();
-  return {};
+  redirectWithFlash("/admin/holidays", "deleted");
 }

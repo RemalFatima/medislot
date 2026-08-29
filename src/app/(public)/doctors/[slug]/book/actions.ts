@@ -1,9 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { ZodError } from "zod";
 import { bookAppointment } from "@/server/appointments/book";
 import { SlotUnavailableError, DuplicateBookingError } from "@/server/appointments/errors";
+import { isZodError } from "@/lib/human-error";
 
 export type BookFormState = {
   error?: string;
@@ -35,7 +35,7 @@ export async function bookAppointmentAction(
     if (error instanceof DuplicateBookingError) {
       return { error: error.message };
     }
-    if (error instanceof ZodError) {
+    if (isZodError(error)) {
       return {
         error: error.issues[0]?.message ?? "Check the booking details.",
       };

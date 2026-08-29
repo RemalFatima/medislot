@@ -64,7 +64,9 @@ export function WeeklyHoursForm({
   );
 
   return (
-    <section className="mt-8 rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card) sm:p-6">
+    <section className="mt-8 overflow-hidden rounded-xl border border-border bg-surface shadow-(--shadow-card)">
+      <div className="h-1.5 bg-primary" />
+      <div className="bg-linear-to-b from-accent/40 to-surface p-5 sm:p-6">
       <h2 className="text-base font-semibold text-foreground">Weekly hours</h2>
       <p className="mt-1 max-w-2xl text-sm text-muted">
         Times are in {timezone.replace(/_/g, " ")}. Add two intervals on the same
@@ -199,6 +201,7 @@ export function WeeklyHoursForm({
           <FormError message={state.error} />
         </ValidatedForm>
       )}
+      </div>
     </section>
   );
 }

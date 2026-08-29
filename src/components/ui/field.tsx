@@ -43,12 +43,15 @@ export function RequiredMark() {
   );
 }
 
-function validityMessage(validity: ValidityState, fallback: string): string {
+function validityMessage(control: ControlElement): string {
+  const validity = control.validity;
   if (validity.valueMissing) {
     return "This field is required.";
   }
   if (validity.typeMismatch) {
-    return "Enter a valid value.";
+    return control instanceof HTMLInputElement && control.type === "email"
+      ? "Enter a valid email."
+      : "Enter a valid value.";
   }
   if (validity.tooShort) {
     return "This field is too short.";
@@ -59,7 +62,7 @@ function validityMessage(validity: ValidityState, fallback: string): string {
   if (validity.rangeUnderflow || validity.rangeOverflow || validity.stepMismatch) {
     return "Enter a valid number.";
   }
-  return fallback || "Check this field.";
+  return control.validationMessage || "Check this field.";
 }
 
 type ControlElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
@@ -164,7 +167,7 @@ export function Field({
         onInvalid: (event: FormEvent<ControlElement>) => {
           event.preventDefault();
           const target = event.currentTarget;
-          setLocalError(validityMessage(target.validity, target.validationMessage));
+          setLocalError(validityMessage(target));
           child.props.onInvalid?.(event);
         },
         onInput: (event: FormEvent<ControlElement>) => {

@@ -1,14 +1,15 @@
 import Link from "next/link";
+import { Building2 } from "lucide-react";
+import { CatalogPageHero } from "@/components/admin/catalog-page-hero";
+import { CatalogPreviewCard } from "@/components/admin/catalog-preview";
 import { CatalogSearch } from "@/components/admin/catalog-search";
-import { VisibilityBadge } from "@/components/admin/visibility-badge";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { listDepartments } from "@/server/catalog/departments";
 import { listDoctors } from "@/server/catalog/doctors";
 import { buttonClass } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, cardGridHoverClass } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -43,10 +44,13 @@ export default async function AdminDepartmentsPage({
           .includes(query.toLowerCase()),
       )
     : departments;
+  const countLabel =
+    visible.length === 1 ? "1 department" : `${visible.length} departments`;
 
   return (
-    <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <PageHeader
+    <main className="flex-1">
+      <CatalogPageHero
+        eyebrow="Catalog"
         title="Departments"
         description="Organize doctors into care areas for the public catalog."
         actions={
@@ -58,62 +62,75 @@ export default async function AdminDepartmentsPage({
         }
       />
 
-      <Card className="p-4 sm:p-5">
-        <CatalogSearch
-          action="/admin/departments"
-          query={query}
-          placeholder="Search departments"
-        />
-      </Card>
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <Card className="overflow-hidden p-0">
+          <div className="h-1.5 bg-primary" />
+          <div className="bg-linear-to-b from-accent/30 to-surface p-4 sm:p-5">
+            <CatalogSearch
+              action="/admin/departments"
+              query={query}
+              placeholder="Search departments"
+            />
+          </div>
+        </Card>
 
-      {visible.length === 0 ? (
-        <EmptyState
-          className="mt-6"
-          title={query ? "No departments match this search" : "No departments yet"}
-          description={
-            query
-              ? "Try a different name, or clear the search."
-              : "Add a department, then assign doctors to it."
-          }
-          action={
-            query ? (
-              <Link href="/admin/departments" className={buttonClass({ variant: "secondary" })}>
-                Clear search
-              </Link>
-            ) : canManage ? (
-              <Link href="/admin/departments/new" className={buttonClass({ variant: "secondary" })}>
-                Add department
-              </Link>
-            ) : null
-          }
-        />
-      ) : (
-        <ul className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {visible.map((department) => {
-            const count = doctorCounts.get(department.id) ?? 0;
-            return (
-              <li key={department.id}>
-                <Link href={`/admin/departments/${department.id}`} className="block h-full">
-                  <Card className="flex h-full flex-col p-4 transition-colors hover:border-primary/30">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="font-medium text-foreground">{department.name}</p>
-                      <VisibilityBadge active={department.is_active} />
-                    </div>
-                    {department.description ? (
-                      <p className="mt-2 line-clamp-2 text-sm text-muted">
-                        {department.description}
-                      </p>
-                    ) : null}
-                    <p className="mt-3 text-xs text-muted">
-                      {count === 1 ? "1 doctor" : `${count} doctors`}
-                    </p>
-                  </Card>
+        {visible.length === 0 ? (
+          <EmptyState
+            className="mt-8"
+            title={query ? "No departments match this search" : "No departments yet"}
+            description={
+              query
+                ? "Try a different name, or clear the search."
+                : "Add a department, then assign doctors to it."
+            }
+            action={
+              query ? (
+                <Link href="/admin/departments" className={buttonClass({ variant: "secondary" })}>
+                  Clear search
                 </Link>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+              ) : canManage ? (
+                <Link href="/admin/departments/new" className={buttonClass({ variant: "secondary" })}>
+                  Add department
+                </Link>
+              ) : null
+            }
+          />
+        ) : (
+          <>
+            <p className="mt-8 mb-4 inline-flex items-center gap-2 text-sm text-muted">
+              <Building2 className="size-4 text-primary" aria-hidden />
+              {countLabel}
+            </p>
+            <ul className={`grid gap-4 sm:grid-cols-2 xl:grid-cols-3 ${cardGridHoverClass}`}>
+              {visible.map((department) => {
+                const count = doctorCounts.get(department.id) ?? 0;
+                return (
+                  <li key={department.id}>
+                    <CatalogPreviewCard
+                      title={department.name}
+                      description={department.description}
+                      meta={count === 1 ? "1 doctor" : `${count} doctors`}
+                      active={department.is_active}
+                      editHref={`/admin/departments/${department.id}`}
+                      canEdit={canManage}
+                      fields={[
+                        { label: "Name", value: department.name },
+                        { label: "Description", value: department.description ?? "" },
+                        { label: "Display order", value: String(department.sort_order) },
+                        {
+                          label: "Doctors",
+                          value: count === 1 ? "1 doctor" : `${count} doctors`,
+                        },
+                        { label: "Status", value: department.is_active ? "Active" : "Hidden" },
+                      ]}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
+      </div>
     </main>
   );
 }

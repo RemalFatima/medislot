@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { createDoctor, updateDoctor } from "@/server/catalog/doctors";
 import { humanErrorMessage } from "@/lib/human-error";
+import { redirectWithFlash } from "@/lib/flash";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -55,7 +55,7 @@ export async function createDoctorAction(
   }
 
   revalidateCatalog();
-  redirect("/admin/doctors");
+  redirectWithFlash("/admin/doctors", "created");
 }
 
 export async function updateDoctorAction(
@@ -81,5 +81,5 @@ export async function updateDoctorAction(
   }
 
   revalidateCatalog();
-  redirect("/admin/doctors");
+  redirectWithFlash("/admin/doctors", "updated");
 }

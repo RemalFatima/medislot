@@ -16,7 +16,7 @@ import {
 } from "@/components/public/department-card";
 import { DoctorCard } from "@/components/public/doctor-card";
 import { buttonClass } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, cardGridHoverClass, cardLiftClass } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getPublicOrganization } from "@/server/tenant/getPublicOrganization";
@@ -145,7 +145,7 @@ export default async function Home() {
               description="The clinic has not listed departments on this site yet."
             />
           ) : (
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${cardGridHoverClass}`}>
               {featuredDepartments.map((department) => (
                 <li key={department.id}>
                   <DepartmentCard
@@ -173,7 +173,7 @@ export default async function Home() {
               description="Doctor profiles will appear here once the clinic adds them."
             />
           ) : (
-            <ul className="grid gap-4 md:grid-cols-2">
+            <ul className={`grid gap-4 md:grid-cols-2 ${cardGridHoverClass}`}>
               {featuredDoctors.map((doctor) => (
                 <li key={doctor.id}>
                   <DoctorCard doctor={doctor} />
@@ -195,12 +195,12 @@ export default async function Home() {
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
             The public booking flow stays on one page. These steps are just to make the path clear.
           </p>
-          <ol className="mt-8 grid gap-4 md:grid-cols-3">
+          <ol className={`mt-8 grid gap-4 md:grid-cols-3 ${cardGridHoverClass}`}>
             {bookingSteps.map((step, index) => {
               const Icon = step.icon;
               return (
                 <li key={step.title}>
-                  <Card className="h-full overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
+                  <Card className={`h-full overflow-hidden p-0 ${cardLiftClass}`}>
                     <div className="h-1.5 bg-primary" />
                     <div className="flex h-full flex-col bg-linear-to-b from-accent/40 to-surface p-6">
                       <div className="flex items-center justify-between gap-3">
@@ -235,12 +235,12 @@ export default async function Home() {
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
             Built for outpatient visits: discover a doctor, pick a time, and confirm.
           </p>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+          <ul className={`mt-8 grid gap-4 sm:grid-cols-2 ${cardGridHoverClass}`}>
             {reasons.map((reason) => {
               const Icon = reason.icon;
               return (
                 <li key={reason.title}>
-                  <Card className="h-full overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
+                  <Card className={`h-full overflow-hidden p-0 ${cardLiftClass}`}>
                     <div className="flex h-full gap-4 border-l-[3px] border-primary p-5">
                       <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent text-primary ring-1 ring-primary/10">
                         <Icon className="size-5" aria-hidden />

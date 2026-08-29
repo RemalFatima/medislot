@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { fieldClass } from "@/components/ui/field";
+import { Field, fieldClass, ValidatedForm } from "@/components/ui/field";
 import { APPOINTMENT_STATUS_LABELS } from "@/server/appointments/labels";
 import type { AppointmentStatus } from "@/types/database";
 
@@ -28,19 +28,15 @@ export function AppointmentsFilters({
   const [pending, setPending] = useState(false);
 
   return (
-    <form
+    <ValidatedForm
       method="get"
       onSubmit={() => setPending(true)}
       className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
     >
-      <label className="min-w-0">
-        <span className="mb-1.5 block text-sm font-medium text-foreground">Date</span>
-        <input type="date" name="date" defaultValue={date} className={fieldClass} />
-      </label>
-      <label className="min-w-0">
-        <span className="mb-1.5 block text-sm font-medium text-foreground">
-          Doctor
-        </span>
+      <Field label="Date">
+        <input type="date" name="date" required defaultValue={date} className={fieldClass} />
+      </Field>
+      <Field label="Doctor">
         <select name="doctor" defaultValue={doctorId ?? ""} className={fieldClass}>
           <option value="">All doctors</option>
           {doctors.map((doctor) => (
@@ -49,11 +45,8 @@ export function AppointmentsFilters({
             </option>
           ))}
         </select>
-      </label>
-      <label className="min-w-0">
-        <span className="mb-1.5 block text-sm font-medium text-foreground">
-          Status
-        </span>
+      </Field>
+      <Field label="Status">
         <select name="status" defaultValue={status ?? ""} className={fieldClass}>
           <option value="">All statuses</option>
           {STATUSES.map((value) => (
@@ -62,12 +55,12 @@ export function AppointmentsFilters({
             </option>
           ))}
         </select>
-      </label>
+      </Field>
       <div className="flex items-end">
         <Button type="submit" variant="secondary" disabled={pending} className="w-full">
           {pending ? "Filtering…" : "Apply filters"}
         </Button>
       </div>
-    </form>
+    </ValidatedForm>
   );
 }

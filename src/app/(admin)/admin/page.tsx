@@ -14,7 +14,7 @@ import { listDepartments } from "@/server/catalog/departments";
 import { listDoctors } from "@/server/catalog/doctors";
 import { listServices } from "@/server/catalog/services";
 import { buttonClass } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, cardLiftClass } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import { APP_NAME } from "@/lib/brand";
 
@@ -242,7 +242,7 @@ function CatalogLink({
 }) {
   return (
     <Link href={href} className="block h-full rounded-xl">
-      <Card className="flex h-full flex-col overflow-hidden p-0 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-(--shadow-card)">
+      <Card className={`flex h-full flex-col overflow-hidden p-0 ${cardLiftClass}`}>
         <div className="h-1.5 bg-primary" />
         <div className="flex flex-1 flex-col bg-linear-to-b from-accent/40 to-surface p-4">
           <span className="flex size-11 items-center justify-center rounded-2xl bg-surface text-primary shadow-(--shadow-card) ring-1 ring-primary/10">

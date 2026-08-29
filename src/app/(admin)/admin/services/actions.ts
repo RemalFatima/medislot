@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { createService, updateService } from "@/server/catalog/services";
 import { humanErrorMessage } from "@/lib/human-error";
+import { redirectWithFlash } from "@/lib/flash";
 import {
   type CatalogFormState,
   readCheckbox,
@@ -47,7 +47,7 @@ export async function createServiceAction(
   }
 
   revalidateCatalog();
-  redirect("/admin/services");
+  redirectWithFlash("/admin/services", "created");
 }
 
 export async function updateServiceAction(
@@ -73,5 +73,5 @@ export async function updateServiceAction(
   }
 
   revalidateCatalog();
-  redirect("/admin/services");
+  redirectWithFlash("/admin/services", "updated");
 }

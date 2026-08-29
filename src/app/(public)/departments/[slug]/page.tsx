@@ -5,6 +5,7 @@ import { getDepartmentBySlug } from "@/server/catalog/departments";
 import { listDoctors } from "@/server/catalog/doctors";
 import { DoctorCard } from "@/components/public/doctor-card";
 import { buttonClass } from "@/components/ui/button";
+import { cardGridHoverClass } from "@/components/ui/card";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -80,7 +81,7 @@ export default async function DepartmentDetailPage({
             }
           />
         ) : (
-          <ul className="grid gap-4 md:grid-cols-2">
+          <ul className={`grid gap-4 md:grid-cols-2 ${cardGridHoverClass}`}>
             {doctors.map((doctor) => (
               <li key={doctor.id}>
                 <DoctorCard doctor={doctor} />

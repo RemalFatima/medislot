@@ -9,6 +9,7 @@ import {
 import { DoctorCard } from "@/components/public/doctor-card";
 import { DoctorsFilters } from "@/components/public/doctors-filters";
 import { buttonClass } from "@/components/ui/button";
+import { cardGridHoverClass } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -136,7 +137,7 @@ export default async function DoctorsPage({
               <Stethoscope className="size-4 text-primary" aria-hidden />
               {countLabel}
             </p>
-            <ul className="grid gap-4 md:grid-cols-2">
+            <ul className={`grid gap-4 md:grid-cols-2 ${cardGridHoverClass}`}>
               {visibleDoctors.map((doctor) => (
                 <li key={doctor.id}>
                   <DoctorCard doctor={doctor} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { Clock3, DoorOpen, UserRound } from "lucide-react";
 import { FormError } from "@/components/admin/form-error";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -33,7 +34,7 @@ export function WalkInForm({
   if (slots.length === 0) {
     return (
       <EmptyState
-        className="mt-6"
+        className="mt-8"
         title="No times available on this day"
         description="Try another date, doctor, or service."
       />
@@ -45,77 +46,94 @@ export function WalkInForm({
       <input type="hidden" name="doctor_id" value={doctorId} />
       <input type="hidden" name="service_id" value={serviceId} />
 
-      <RequiredGroup
-        legend="Choose a time"
-        hint={
-          <p className="mt-1 mb-3 text-sm text-muted">
-            Available times in {timezone.replace(/_/g, " ")}.
-            {selectedStart
-              ? ` Selected ${formatAppointmentTime(selectedStart, timezone)}.`
-              : " Select one slot to continue."}
-          </p>
-        }
-      >
-        <div className="grid grid-cols-2 gap-2 min-[380px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
-          {slots.map((slot) => {
-            const selected = selectedStart === slot.startAt;
-            return (
-              <label
-                key={slot.startAt}
-                className={cn(
-                  "flex min-h-11 cursor-pointer items-center justify-center rounded-lg border px-2 py-2 text-sm font-medium transition-colors",
-                  selected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent",
-                  "has-focus-visible:ring-2 has-focus-visible:ring-(--ring)",
-                )}
-              >
-                <input
-                  type="radio"
-                  name="start_at"
-                  value={slot.startAt}
-                  required
-                  className="sr-only"
-                  onChange={() => setSelectedStart(slot.startAt)}
-                />
-                {formatAppointmentTime(slot.startAt, timezone)}
-              </label>
-            );
-          })}
+      <div className="flex items-start gap-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
+          2
+        </span>
+        <div className="min-w-0 flex-1">
+          <RequiredGroup
+            legend="Choose a time"
+            hint={
+              <p className="mt-1 mb-3 text-sm text-muted">
+                <Clock3 className="me-1 inline size-3.5 align-[-2px] text-primary" aria-hidden />
+                Times in {timezone.replace(/_/g, " ")}.
+                {selectedStart
+                  ? ` Selected ${formatAppointmentTime(selectedStart, timezone)}.`
+                  : " Select one slot to continue."}
+              </p>
+            }
+          >
+            <div className="grid grid-cols-2 gap-2 min-[380px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
+              {slots.map((slot) => {
+                const selected = selectedStart === slot.startAt;
+                return (
+                  <label
+                    key={slot.startAt}
+                    className={cn(
+                      "flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-2 py-2 text-sm font-semibold tabular-nums transition-colors",
+                      selected
+                        ? "border-primary bg-primary text-primary-foreground shadow-(--shadow-card)"
+                        : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent",
+                      "has-focus-visible:ring-2 has-focus-visible:ring-(--ring)",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="start_at"
+                      value={slot.startAt}
+                      required
+                      className="sr-only"
+                      onChange={() => setSelectedStart(slot.startAt)}
+                    />
+                    {formatAppointmentTime(slot.startAt, timezone)}
+                  </label>
+                );
+              })}
+            </div>
+          </RequiredGroup>
         </div>
-      </RequiredGroup>
+      </div>
 
-      <div className="flex max-w-xl flex-col gap-4">
-        <div>
-          <h2 className="text-base font-semibold text-foreground">Patient details</h2>
-          <p className="mt-1 text-sm text-muted">
-            Same booking lock as online appointments. Confirmed instantly.
-          </p>
+      <div className="flex items-start gap-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
+          3
+        </span>
+        <div className="flex min-w-0 flex-1 max-w-xl flex-col gap-4">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-base font-semibold text-foreground">
+              <UserRound className="size-4 text-primary" aria-hidden />
+              Patient details
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Confirmed instantly. Same booking lock as online appointments.
+            </p>
+          </div>
+          <Field label="Patient name">
+            <input name="patient_name" required minLength={2} className={fieldClass} />
+          </Field>
+          <Field label="Phone">
+            <input
+              name="patient_phone"
+              required
+              minLength={7}
+              inputMode="tel"
+              className={fieldClass}
+            />
+          </Field>
+          <Field label="Email (optional)">
+            <input type="email" name="patient_email" className={fieldClass} />
+          </Field>
+          <Field label="Notes (optional)">
+            <textarea name="notes" rows={3} className={textareaClass} />
+          </Field>
         </div>
-        <Field label="Patient name">
-          <input name="patient_name" required minLength={2} className={fieldClass} />
-        </Field>
-        <Field label="Phone">
-          <input
-            name="patient_phone"
-            required
-            minLength={7}
-            inputMode="tel"
-            className={fieldClass}
-          />
-        </Field>
-        <Field label="Email (optional)">
-          <input type="email" name="patient_email" className={fieldClass} />
-        </Field>
-        <Field label="Notes (optional)">
-          <textarea name="notes" rows={3} className={textareaClass} />
-        </Field>
       </div>
 
       <FormError message={state.error} />
 
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-        {pending ? "Saving…" : "Create walk-in"}
+        <DoorOpen className="size-4" aria-hidden />
+        {pending ? "Saving…" : "Confirm walk-in"}
       </Button>
     </ValidatedForm>
   );
