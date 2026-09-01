@@ -3,7 +3,10 @@ import { Clock3, Phone, Stethoscope, UserRound } from "lucide-react";
 import { AppointmentSourceBadge } from "@/components/admin/appointment-source-badge";
 import { AppointmentStatusBadge } from "@/components/admin/appointment-status-badge";
 import { Card } from "@/components/ui/card";
-import { formatAppointmentTime } from "@/server/appointments/format";
+import {
+  formatAppointmentDate,
+  formatAppointmentTime,
+} from "@/server/appointments/format";
 import type { AppointmentListItem } from "@/server/appointments/list";
 import type { AppointmentStatus } from "@/types/database";
 
@@ -20,12 +23,14 @@ export function AppointmentCard({
   doctorName,
   serviceName,
   timezone,
+  showDate = false,
   children,
 }: {
   appointment: AppointmentListItem;
   doctorName: string;
   serviceName: string;
   timezone: string;
+  showDate?: boolean;
   children: ReactNode;
 }) {
   const start = formatAppointmentTime(appointment.start_at, timezone);
@@ -42,6 +47,11 @@ export function AppointmentCard({
               {start}
             </p>
             <p className="mt-0.5 text-xs font-medium text-muted">to {end}</p>
+            {showDate ? (
+              <p className="mt-1 text-center text-[11px] font-medium text-muted">
+                {formatAppointmentDate(appointment.start_at, timezone)}
+              </p>
+            ) : null}
           </div>
 
           <div className="min-w-0 flex-1">

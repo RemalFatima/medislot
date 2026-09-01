@@ -20,7 +20,7 @@ export function AppointmentsFilters({
   status,
   doctors,
 }: {
-  date: string;
+  date?: string;
   doctorId?: string;
   status?: AppointmentStatus;
   doctors: { id: string; full_name: string }[];
@@ -33,8 +33,11 @@ export function AppointmentsFilters({
       onSubmit={() => setPending(true)}
       className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
     >
-      <Field label="Date">
-        <input type="date" name="date" required defaultValue={date} className={fieldClass} />
+      <Field
+        label="Date"
+        hint="Leave empty to see every date."
+      >
+        <input type="date" name="date" defaultValue={date ?? ""} className={fieldClass} />
       </Field>
       <Field label="Doctor">
         <select name="doctor" defaultValue={doctorId ?? ""} className={fieldClass}>
@@ -56,7 +59,10 @@ export function AppointmentsFilters({
           ))}
         </select>
       </Field>
-      <div className="flex items-end">
+      <div className="flex flex-col gap-1.5 text-sm">
+        <span className="invisible font-medium text-foreground" aria-hidden>
+          Apply
+        </span>
         <Button type="submit" variant="secondary" disabled={pending} className="w-full">
           {pending ? "Filtering…" : "Apply filters"}
         </Button>

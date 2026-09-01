@@ -112,6 +112,18 @@ if (createError) {
   }
 
   userId = existing.id;
+
+  const { error: updateError } = await supabase.auth.admin.updateUserById(
+    userId,
+    {
+      password: adminPassword,
+      email_confirm: true,
+    },
+  );
+
+  if (updateError) {
+    throw updateError;
+  }
 }
 
 if (!userId) {

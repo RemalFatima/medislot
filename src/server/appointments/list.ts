@@ -20,33 +20,13 @@ export type AppointmentListItem = {
 };
 
 export async function listAppointments(options: {
-  date: string;
+  date?: string;
   doctorId?: string;
   status?: AppointmentStatus;
   timezone: string;
 }): Promise<AppointmentListItem[]> {
   const organizationId = await getOrganizationId();
   const supabase = await createClient();
-  const fromParts = parseDateParts(options.date);
-  const toParts = parseDateParts(addCalendarDays(options.date, 1));
-  const fromAt = zonedLocalToUtc(
-    options.timezone,
-    fromParts.year,
-    fromParts.month,
-    fromParts.day,
-    0,
-    0,
-    0,
-  ).toISOString();
-  const toAt = zonedLocalToUtc(
-    options.timezone,
-    toParts.year,
-    toParts.month,
-    toParts.day,
-    0,
-    0,
-    0,
-  ).toISOString();
 
   let query = supabase
     .from("appointments")
@@ -54,9 +34,31 @@ export async function listAppointments(options: {
       "id, doctor_id, service_id, patient_name, patient_phone, patient_email, start_at, end_at, status, source, notes, confirmation_token",
     )
     .eq("organization_id", organizationId)
-    .gte("start_at", fromAt)
-    .lt("start_at", toAt)
     .order("start_at", { ascending: true });
+
+  if (options.date) {
+    const fromParts = parseDateParts(options.date);
+    const toParts = parseDateParts(addCalendarDays(options.date, 1));
+    const fromAt = zonedLocalToUtc(
+      options.timezone,
+      fromParts.year,
+      fromParts.month,
+      fromParts.day,
+      0,
+      0,
+      0,
+    ).toISOString();
+    const toAt = zonedLocalToUtc(
+      options.timezone,
+      toParts.year,
+      toParts.month,
+      toParts.day,
+      0,
+      0,
+      0,
+    ).toISOString();
+    query = query.gte("start_at", fromAt).lt("start_at", toAt);
+  }
 
   if (options.doctorId) {
     query = query.eq("doctor_id", options.doctorId);

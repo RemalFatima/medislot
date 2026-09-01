@@ -23,7 +23,7 @@ export function DeleteExceptionButton({ id }: { id: string }) {
         <input type="hidden" name="id" value={id} />
         <Button
           type="button"
-          variant="danger"
+          variant="secondary"
           size="sm"
           disabled={pending}
           onClick={() => setConfirmOpen(true)}

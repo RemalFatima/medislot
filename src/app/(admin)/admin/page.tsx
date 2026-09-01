@@ -59,7 +59,10 @@ export default async function AdminPage() {
                 Times in {summary.timezone.replace(/_/g, " ")}
               </p>
             </div>
-            <Link href="/admin/appointments" className={buttonClass()}>
+            <Link
+              href={`/admin/appointments?date=${summary.today}`}
+              className={buttonClass()}
+            >
               Today&apos;s appointments
             </Link>
           </div>
@@ -217,7 +220,7 @@ export default async function AdminPage() {
               value={String(services.length)}
             />
             <CatalogLink
-              href="/admin/appointments"
+              href={`/admin/appointments?date=${summary.today}`}
               icon={CalendarDays}
               label="Appointments"
               value="Open today"

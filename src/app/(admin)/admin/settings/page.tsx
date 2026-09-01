@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
+import { CatalogPageHero } from "@/components/admin/catalog-page-hero";
 import { canManageCatalog } from "@/server/auth/permissions";
 import { requireStaff } from "@/server/auth/requireStaff";
 import { getOrganizationSettings } from "@/server/settings/organization";
 import { listTimeZones } from "@/server/settings/timezones";
-import { PageHeader } from "@/components/ui/page-header";
 import { OrganizationSettingsForm } from "./organization-form";
 
 export const dynamic = "force-dynamic";
@@ -21,17 +21,22 @@ export default async function AdminSettingsPage() {
     zones.unshift(organization.timezone);
   }
 
+  const canManage = canManageCatalog(staff.role);
+
   return (
-    <main className="px-4 py-6 sm:px-6 lg:px-8">
-      <PageHeader
+    <main className="flex-1">
+      <CatalogPageHero
+        eyebrow="Clinic"
         title="Clinic settings"
         description="Name, branding, contact, timezone, and whether the public site is visible."
       />
-      <OrganizationSettingsForm
-        organization={organization}
-        timezones={zones}
-        readOnly={!canManageCatalog(staff.role)}
-      />
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <OrganizationSettingsForm
+          organization={organization}
+          timezones={zones}
+          readOnly={!canManage}
+        />
+      </div>
     </main>
   );
 }
